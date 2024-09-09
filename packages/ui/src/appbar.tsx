@@ -16,7 +16,7 @@ export const Appbar = ({
     return (
         <div className="flex justify-between items-center bg-gradient-to-r from-blue-300 to-purple-400 p-4 shadow-lg">
             <div className="text-4xl font-bold text-black">
-                Whale Alert
+                Crypto Payroll
             </div>
             <div className="flex items-center space-x-4">
                 {user && <span className="text-black">Welcome, {user.name}</span>}
