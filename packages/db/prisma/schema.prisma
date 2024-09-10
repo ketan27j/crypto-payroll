@@ -19,6 +19,54 @@ model User {
   name      String?
   number    String    @unique
   password  String
+  createdAt  DateTime @default(now())
+}
+
+model Client {
+  id        Int       @id @default(autoincrement())
+  email     String?   @unique
+  name      String?
+  number    String    @unique
+  password  String
+  kycok     Boolean?  @default(false)
+  role      String?   @default("user")
+  wallet    String?
+  createdBy Int       @default(1)
+  isActive  Boolean?  @default(true)
+  Employee  Employee[]
+  createdAt  DateTime @default(now())
+}
+
+model Employee {
+  id        Int       @id @default(autoincrement())
+  email     String?   @unique
+  name      String?
+  wallet    String?
+  salary    Int
+  createdAt  DateTime @default(now())
+  isActive  Boolean?  @default(true)
+  clientId    Int
+  user      Client      @relation(fields: [clientId], references: [id])
+}
+
+model Transaction {
+  id              Int       @id @default(autoincrement())
+  senderWallet    String?
+  receiverWallet  String?
+  amount          String?
+  createdAt       DateTime @default(now())
+  paidOn          DateTime?
+  isActive  Boolean?  @default(true)
+}
+
+model PaymentSchedule {
+  id        Int       @id @default(autoincrement())
+  sender    String?
+  receiver  String?
+  amount    String?
+  status    String?
+  createdAt  DateTime @default(now())
+  isActive  Boolean?  @default(true)
 }
 
 enum AuthType {
