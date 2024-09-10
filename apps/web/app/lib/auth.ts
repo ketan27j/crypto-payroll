@@ -1,6 +1,7 @@
 import db from "@repo/db";
 import CredentialsProvider from "next-auth/providers/credentials"
 import bcrypt from "bcryptjs";
+import toast from "react-hot-toast";
 
 export const authOptions = {
     providers: [
@@ -21,6 +22,7 @@ export const authOptions = {
             if (existingUser) {
                 const passwordValidation = await bcrypt.compare(credentials.password, existingUser.password);
                 if (passwordValidation) {
+                    toast.success('Logged in successfully');
                     return {
                         id: existingUser.id.toString(),
                         name: existingUser.name,
@@ -29,23 +31,23 @@ export const authOptions = {
                 }
                 return null;
             }
-
-            try {
-                const user = await db.user.create({
-                    data: {
-                        number: credentials.phone,
-                        password: hashedPassword
-                    }
-                });
+            toast.error('Username or password is incorrect');
+            // try {
+            //     const user = await db.user.create({
+            //         data: {
+            //             number: credentials.phone,
+            //             password: hashedPassword
+            //         }
+            //     });
             
-                return {
-                    id: user.id.toString(),
-                    name: user.name,
-                    email: user.number
-                }
-            } catch(e) {
-                console.error(e);
-            }
+            //     return {
+            //         id: user.id.toString(),
+            //         name: user.name,
+            //         email: user.number
+            //     }
+            // } catch(e) {
+            //     console.error(e);
+            // }
 
             return null
           },
