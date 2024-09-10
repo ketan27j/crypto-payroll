@@ -17,7 +17,7 @@ export default async function Layout({
               <div>
                   <SidebarItem href={"/dashboard"} icon={<HomeIcon />} title="Home" />
                   <SidebarItem href={"/employee"} icon={<TransferIcon />} title="Employee Information" />
-                  <SidebarItem href={"/transactions"} icon={<TransactionsIcon />} title="Transactions" />
+                  <SidebarItem href={"/fundtransfer"} icon={<TransactionsIcon />} title="Fund Transfer" />
               </div>
           </div>
               {children}
