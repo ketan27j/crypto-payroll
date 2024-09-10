@@ -55,6 +55,7 @@ model Transaction {
   senderWallet   String?
   receiverWallet String?
   amount         Int
+  currency       String    @default("SOL")
   createdAt      DateTime  @default(now())
   paidOn         DateTime?
   clientId       Int
@@ -67,6 +68,7 @@ model PaymentSchedule {
   sender    String?
   receiver  String?
   amount    String?
+  currency  String?
   status    String?
   createdAt DateTime @default(now())
   isActive  Boolean? @default(true)
