@@ -81,6 +81,6 @@ To develop all apps and packages, run the following command:
 
 ```
 cd crypto-payroll
-pnpm dev
+npm run dev
 ```
 
