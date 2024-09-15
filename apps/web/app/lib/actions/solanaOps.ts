@@ -36,3 +36,12 @@ export async function transferSol(connection: Connection, wallet: WalletContextS
     await connection.confirmTransaction(signature);
     return signature;
 }
+
+export async function checkValidWallet(connection: Connection, walletAddress: string) {
+    try {
+        const address = new PublicKey(walletAddress);
+        return PublicKey.isOnCurve(address);
+    } catch (error) {
+        return false;
+    }
+}
