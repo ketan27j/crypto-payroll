@@ -7,7 +7,7 @@ async function main() {
         update: {},
         create: {
           number: '1234567890',
-          password: 'admin',
+          password: '$2a$10$ezOyrvvZZsZpgE/781jKHuPqnZiw/tlISpfGUI6f0wxWURCUieydy',
           name: 'admin',
           email: 'admin@gmail.com'
         },
@@ -19,12 +19,13 @@ async function main() {
     create: {
       number: '1234567890',
       email: 'ketan@gmail.com',
-      password: 'ketan',
+      password: '$2a$10$ezOyrvvZZsZpgE/781jKHuPqnZiw/tlISpfGUI6f0wxWURCUieydy',
       name: 'ketan9',
       role:'user',
       wallet:'FMwGa1qhX1yuvA8HCTwKUm6mi82rcAeg7zyiEecNoc5T',
       kycok:false,
-      createdBy:admin.id
+      createdBy:admin.id,
+      userId:1
     },
   })
 

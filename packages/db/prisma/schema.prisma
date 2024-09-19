@@ -20,6 +20,7 @@ model User {
   number    String   @unique
   password  String
   createdAt DateTime @default(now())
+  client    Client[]
 }
 
 model Client {
@@ -35,6 +36,8 @@ model Client {
   isActive    Boolean?      @default(true)
   Employee    Employee[]
   createdAt   DateTime      @default(now())
+  userId      Int
+  user        User          @relation(fields: [userId], references: [id])
   Transaction Transaction[]
 }
 
