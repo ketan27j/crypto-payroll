@@ -44,7 +44,7 @@ export const AddClient = () => {
            
         return true;
       };  
-    return <Card title="Add Client Details">
+    return <Card title="Add Client Information">
         <div>
             <TextInput label="Name" placeholder="Name" value={name} onChange={(value) => {setName(value)}} />
             <TextInput label="Email" placeholder="Email" value={email || ""} onChange={(value) => {setEmail(value)}} />
