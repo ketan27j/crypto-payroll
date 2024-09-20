@@ -45,9 +45,14 @@ model Employee {
   id        Int      @id @default(autoincrement())
   email     String?  @unique
   name      String?
+  designation String?
+  functionalTitle String?
   wallet    String?
   salary    Int
+  allowances    Int @default(0)
   createdAt DateTime @default(now())
+  createdBy Int @default(1)
+  updatedBy Int @default(1)
   isActive  Boolean? @default(true)
   clientId  Int
   client    Client   @relation(fields: [clientId], references: [id])

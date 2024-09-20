@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
+// import  "bootstrap/dist/css/bootstrap.min.css"
 import { Providers } from "../providers";
 import { AppbarClient } from "../components/AppbarClient";
 import { Toaster } from "react-hot-toast";

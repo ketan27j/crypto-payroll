@@ -10,4 +10,8 @@ module.exports = {
     extend: {},
   },
   plugins: [],
+  // prefix: 'tw-',
+  // corePlugins: {
+  //   preflight: false
+  // }
 }
