@@ -13,7 +13,7 @@ export const authOptions = {
           },
           async authorize(credentials: any) {
             const hashedPassword = await bcrypt.hash(credentials.password, 10);
-            const existingUser = await db.client.findFirst({
+            const existingUser = await db.user.findFirst({
                 where: {
                     number: credentials.phone
                 }
