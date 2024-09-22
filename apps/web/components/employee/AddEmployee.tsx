@@ -90,12 +90,16 @@ export const AddEmployee = () => {
                         {renderStep()}
                         <div className="flex flex-col sm:flex-row justify-between mt-8 space-y-4 sm:space-y-0 sm:space-x-4">
                             {step > 1 && (
-                                <Button onClick={prevStep} className="w-full sm:w-auto">
+                                <Button onClick={prevStep} 
+                                // className="w-full sm:w-auto"
+                                >
                                     Previous
                                 </Button>
                             )}
                             {step < 3 ? (
-                                <Button onClick={nextStep} className="w-full sm:w-auto">
+                                <Button onClick={nextStep} 
+                                // className="w-full sm:w-auto"
+                                >
                                     Next
                                 </Button>
                             ) : (
@@ -112,7 +116,7 @@ export const AddEmployee = () => {
                                             toast.error("Something went wrong");
                                         }
                                     }}
-                                    className="w-full sm:w-auto"
+                                    // className="w-full sm:w-auto"
                                 >
                                     Add Employee
                                 </Button>

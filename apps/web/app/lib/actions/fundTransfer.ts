@@ -26,7 +26,7 @@ export async function transferFund(senderWallet: string,receiverWallet: string,c
             currency: currecy,
             amount:amount,
             signature: signature,
-            clientId: userId
+            userId: userId
         },
         });
         return transaction;

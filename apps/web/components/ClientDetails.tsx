@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { Table } from '@repo/ui/table';
 import { ColumnDef } from '@tanstack/react-table';
-import { deleteClient, getClientDetails } from "../app/lib/actions/client";
+import { ClientInfo, deleteClient, getClientDetails } from "../app/lib/actions/client";
 import {type Client} from "@prisma/client";
 import { Card } from '@repo/ui/card';
 import { useRecoilState } from 'recoil';
@@ -10,7 +10,7 @@ import { clientAddState } from '../app/store/clientAddState';
 import toast from 'react-hot-toast';
 
 export const ClientDetails = () => {
-  const [ClientDetails, setClientDetails] = useState<Client[]>([]);
+  const [ClientDetails, setClientDetails] = useState<ClientInfo[]>([]);
   const [clientState, setClientState] = useRecoilState(clientAddState);
   const columns: ColumnDef<Client>[] = [
     {
@@ -49,7 +49,7 @@ export const ClientDetails = () => {
 
   useEffect(() => {
     getClientDetails().then((res) => {
-      const data = res as Client[];
+      const data = res as ClientInfo[];
       console.log(data);
       setClientDetails(data);
     });

@@ -55,7 +55,9 @@ export default function() {
             <div className="w-full">
                 <div style={{ display: "flex", alignItems: "center", justifyContent: "center", height: "50vh" }}>
                     {!url && (
-                        <button onClick={generateVerificationRequest}>
+                        <button onClick={generateVerificationRequest}
+                        className={`px-4 py-2 rounded-md text-white bg-gray-800 hover:bg-gray-700`}
+                        >
                         Create Claim QrCode
                         </button>
                     )}
