@@ -1,8 +1,8 @@
 import { getServerSession } from "next-auth";
 import { NextRequest, NextResponse } from "next/server";
 import { authOptions } from "../../../lib/auth";
-import { sendEmail, sendViaBrevo } from "../../../lib/actions/employee";
-import { sendBrevo } from "../../../lib/actions/notification";
+//import { sendEmail, sendViaBrevo } from "../../../lib/actions/employee";
+import { sendNotification } from "../../../lib/actions/notification";
 
 export async function GET(req: NextRequest, res: any) {
     const session = await getServerSession(authOptions);
@@ -16,7 +16,7 @@ export async function GET(req: NextRequest, res: any) {
     
     // sendViaBrevo();
 
-    sendBrevo();
+    sendNotification(to, "Dapp Admin", "Welcome to Dapp - Complete Onboarding", "<h1> Congratulations!! You are just one step away from onboarding to DApp!! </h1>");
 
     console.log('Email sent to', to);
 
