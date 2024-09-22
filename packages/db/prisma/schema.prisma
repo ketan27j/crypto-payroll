@@ -14,48 +14,46 @@ datasource db {
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
-  email     String?  @unique
-  name      String?
-  number    String   @unique
-  password  String
-  createdAt DateTime @default(now())
-  client    Client[]
-}
-
-model Client {
   id          Int           @id @default(autoincrement())
   email       String?       @unique
+  phone       Int?          @unique
   name        String?
-  number      String        @unique
   password    String
-  kycok       Boolean?      @default(false)
-  role        String?       @default("user")
-  wallet      String?
-  createdBy   Int           @default(1)
-  isActive    Boolean?      @default(true)
-  Employee    Employee[]
   createdAt   DateTime      @default(now())
-  userId      Int
-  user        User          @relation(fields: [userId], references: [id])
+  createdBy   Int?
+  role        String?       @default("user")
+  Client      Client?
+  Employee    Employee[]
   Transaction Transaction[]
 }
 
-model Employee {
-  id        Int      @id @default(autoincrement())
-  email     String?  @unique
-  name      String?
-  designation String?
-  functionalTitle String?
+model Client {
+  id        Int        @id @default(autoincrement())
+  userId    Int        @unique
+  user      User       @relation(fields: [userId], references: [id])
+  kycok     Boolean?   @default(false)
   wallet    String?
-  salary    Int
-  allowances    Int @default(0)
-  createdAt DateTime @default(now())
-  createdBy Int @default(1)
-  updatedBy Int @default(1)
-  isActive  Boolean? @default(true)
-  clientId  Int
-  client    Client   @relation(fields: [clientId], references: [id])
+  createdBy Int        @default(1)
+  isActive  Boolean?   @default(true)
+  createdAt DateTime   @default(now())
+  Employee  Employee[]
+}
+
+model Employee {
+  id              Int      @id @default(autoincrement())
+  designation     String?
+  functionalTitle String?
+  wallet          String?
+  salary          Int
+  allowances      Int      @default(0)
+  createdAt       DateTime @default(now())
+  createdBy       Int      @default(1)
+  updatedBy       Int      @default(1)
+  isActive        Boolean? @default(true)
+  clientId        Int
+  client          Client   @relation(fields: [clientId], references: [id])
+  userId          Int
+  user            User     @relation(fields: [userId], references: [id])
 }
 
 model Transaction {
@@ -67,8 +65,8 @@ model Transaction {
   signature      String
   createdAt      DateTime  @default(now())
   paidOn         DateTime?
-  clientId       Int
-  client         Client    @relation(fields: [clientId], references: [id])
+  userId         Int
+  user           User      @relation(fields: [userId], references: [id])
   isActive       Boolean?  @default(true)
 }
 
@@ -86,4 +84,11 @@ model PaymentSchedule {
 enum AuthType {
   Google
   Github
+}
+
+enum UseRoles {
+  Admin
+  ClientAdmin
+  ClientUser
+  Employee
 }

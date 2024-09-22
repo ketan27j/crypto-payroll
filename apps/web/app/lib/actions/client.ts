@@ -4,16 +4,34 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "../auth";
 import { type Client } from "@prisma/client";
 
-export async function getClientDetails(): Promise<Client[]> {
+export interface ClientInfo {
+    id: number,
+    email: string | null,
+    name: string | null,
+    wallet: string | null,
+    isActive: Boolean | null,
+    kycok: Boolean | null
+}
+
+export async function getClientDetails(): Promise<ClientInfo[]> {
     const session = await getServerSession(authOptions);
     const userId = Number(session?.user?.id);
     try {
-        const res = await prisma.client.findMany({
-            where: {
-                userId: userId
+        const clients = await prisma.client.findMany({
+            include: {
+                user: true,
             }
-        })
-        return res;
+        });
+        console.log('clients', clients.length);
+        const transformedClients: ClientInfo[] = clients.map(client => ({
+            id: client.id,
+            email: client.user.email,
+            name: client.user.name,
+            wallet: client.wallet,
+            isActive: client.isActive,
+            kycok: client.kycok
+        }));      
+        return transformedClients;
     } catch(error) {
         console.log(error);
         return [];
@@ -25,16 +43,28 @@ export async function addClient(name: string, email: string, number: string, pas
     const userId = Number(session?.user?.id);
     console.log(userId);
     try {
-        const res = await prisma.client.create({
+
+        const newUser = await prisma.user.create({
             data: {
-                userId: userId,
-                name: name,
                 email: email,
-                number: number,
                 password: password,
+                name: name,
+                role: 'ClientAdmin',
+                createdBy: userId
+            }
+          });
+  
+          console.log('New Client User: User Id: ' + newUser.id);
+        const newClient = await prisma.client.create({
+            data: {
+                userId: newUser.id,
                 wallet: wallet,
+                kycok: true,
             }
         })
+
+        console.log('Client created', newClient);
+
         return true;
     } catch(error) {
         console.log(error);
