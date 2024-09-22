@@ -8,24 +8,27 @@ export const authOptions = {
       CredentialsProvider({
           name: 'Credentials',
           credentials: {
-            phone: { label: "Phone number", type: "text", placeholder: "1234567890", required: true },
+            // phone: { label: "Phone number", type: "text", placeholder: "1234567890", required: true },
+            email: { label: "Email Id", type: "email", placeholder: "user@email.com", required: true },
             password: { label: "Password", type: "password", required: true }
           },
           async authorize(credentials: any) {
             const hashedPassword = await bcrypt.hash(credentials.password, 10);
             const existingUser = await db.user.findFirst({
                 where: {
-                    number: credentials.phone
+                    email: credentials.email
                 }
             });
 
             if (existingUser) {
-                const passwordValidation = await bcrypt.compare(credentials.password, existingUser.password);
+                // const passwordValidation = await bcrypt.compare(credentials.password, existingUser.password);
+                const passwordValidation = credentials.password === existingUser.password;
                 if (passwordValidation) {
                     return {
                         id: existingUser.id.toString(),
                         name: existingUser.name,
-                        email: existingUser.email
+                        email: existingUser.email,
+                        role: existingUser.role
                     }
                 }
                 return null;
@@ -58,9 +61,17 @@ export const authOptions = {
     ],
     secret: process.env.JWT_SECRET || "secret",
     callbacks: {
+        async jwt({ token, user }: any) {
+            if (user) {
+                token.role = user.role
+            }
+            token.role = token.role || "User"
+            return token
+        },
         async session({ token, session }: any) {
+            console.log('user session', session);
             session.user.id = token.sub
-
+            session.user.role = token.role
             return session
         }
     }

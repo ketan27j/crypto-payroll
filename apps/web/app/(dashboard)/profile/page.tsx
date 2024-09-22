@@ -29,6 +29,7 @@ export default function() {
             )
         )
 
+        reclaimClient.setAppCallbackUrl('https://crypto-payroll-web.vercel.app/api/profile/zkproof?obj=3tm34k590u8t')
         const { requestUrl, statusUrl } = await reclaimClient.createVerificationRequest()
    
         setUrl(requestUrl)
