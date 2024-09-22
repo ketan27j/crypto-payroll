@@ -23,7 +23,7 @@ export default async function Layout({
                   { CanActivate(['Admin','ClientAdmin']) &&
                     <SidebarItem href={"/employee"} icon={<TransferIcon />} title="Employee Information" />
                   }
-                  { CanActivate(['Admin','ClientAdmin']) &&
+                  { CanActivate(['Admin']) &&
                     <SidebarItem href={"/client"} icon={<TransferIcon />} title="Client Information" /> 
                   }
                   { CanActivate(['Admin','ClientAdmin']) &&

@@ -5,7 +5,7 @@ import { authOptions } from "../auth";
 
 import nodemailer from 'nodemailer';
 import { sendNotification } from "./notification";
-var SibApiV3Sdk = require('sib-api-v3-sdk');
+// var SibApiV3Sdk = require('sib-api-v3-sdk');
 
 export interface EmployeeInfo {
     id: number,
@@ -89,7 +89,7 @@ export async function addEmployee(employeeInfo: EmployeeInfo) {
             console.log(error);
             return null;
         }
-    }    
+}    
 
 
 
@@ -154,7 +154,7 @@ export async function getAllEmployees(): Promise<EmployeeInfo[]> {
     return [];
   }
 }
-
+/*
 export async function sendViaBrevo() {
   var defaultClient = SibApiV3Sdk.ApiClient.instance;
 
@@ -193,6 +193,7 @@ export async function sendViaBrevo() {
     // console.error(error);
   });
 }
+*/
 
 export async function sendEmail(to: string, from: string, subject: string, body: string, buttonUrl: string) {
   console.log(`Sending email from: ${process.env.GMAIL_APP_USER}, to: ${to}`);
@@ -239,16 +240,16 @@ export async function sendEmail(to: string, from: string, subject: string, body:
   }
 }
 
-const result = await sendEmail(
-  'recipient@example.com',
-  'sender@example.com',
-  'Test Subject',
-  'This is the email body content.',
-  'http://localhost:3000/some-path'
-);
+// const result = await sendEmail(
+//   'recipient@example.com',
+//   'sender@example.com',
+//   'Test Subject',
+//   'This is the email body content.',
+//   'http://localhost:3000/some-path'
+// );
 
-if (result) {
-  console.log('Email sent successfully');
-} else {
-  console.log('Failed to send email');
-}
+// if (result) {
+//   console.log('Email sent successfully');
+// } else {
+//   console.log('Failed to send email');
+// }
