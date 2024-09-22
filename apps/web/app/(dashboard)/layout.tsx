@@ -9,6 +9,10 @@ export default async function Layout({
   children: React.ReactNode;
 }) {
   const session = await getServerSession(authOptions);
+  console.log('my session', session.user);
+  const CanActivate = (roles: string[]) => {
+    return roles.includes(session?.user?.role);
+  };
   if(session?.user){
     return (
       <div className="flex">
@@ -16,9 +20,15 @@ export default async function Layout({
               <div>
                   <SidebarItem href={"/dashboard"} icon={<HomeIcon />} title="Home" />
                   <SidebarItem href={"/profile"} icon={<AccountIcon />} title="Profile" />
-                  <SidebarItem href={"/employee"} icon={<TransferIcon />} title="Employee Information" />
-                  <SidebarItem href={"/client"} icon={<TransferIcon />} title="Client Information" />
-                  <SidebarItem href={"/fundtransfer"} icon={<TransactionsIcon />} title="Fund Transfer" />
+                  { CanActivate(['Admin','ClientAdmin']) &&
+                    <SidebarItem href={"/employee"} icon={<TransferIcon />} title="Employee Information" />
+                  }
+                  { CanActivate(['Admin','ClientAdmin']) &&
+                    <SidebarItem href={"/client"} icon={<TransferIcon />} title="Client Information" /> 
+                  }
+                  { CanActivate(['Admin','ClientAdmin']) &&
+                    <SidebarItem href={"/fundtransfer"} icon={<TransactionsIcon />} title="Fund Transfer" />
+                  }
               </div>
           </div>
               {children}
