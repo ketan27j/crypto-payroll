@@ -9,7 +9,17 @@ import { checkValidWallet, getBalance, transferSol } from "../app/lib/actions/so
 import { useEffect, useState } from "react";
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import { z } from "zod";
-
+import * as anchor from "@coral-xyz/anchor";
+import { Program, Idl } from "@coral-xyz/anchor";
+import idl from '../app/lib/actions/solana/scOutput/sol_transfer.json';
+import { SolTransfer } from '../app/lib/actions/solana/scOutput/sol_transfer';
+import { PublicKey } from "@solana/web3.js";
+import {
+    Provider,
+    BN,
+    web3,
+  } from '@project-serum/anchor';
+  
 const fundTransferSchema = z.object({
     senderWallet: z.string().min(1, "Sender wallet is required"),
     receiverWallet: z.string().min(1, "Receiver wallet is required"),
@@ -103,6 +113,19 @@ export const FundTranser = () => {
                     setIsLoading(true);
                     try {
                         const signature = await transferSol(connection, wallet, receiverWallet, parseFloat(amount))
+                        const scheduledTime = new anchor.BN(Date.now() / 1000 + 60);
+                        const program = new Program(idl, provider) as Program<SolTransfer>;
+                        const tx = await program.methods
+                                        .transferSol(amount, scheduledTime)
+                                        .accounts({
+                                            sender: wallet.publicKey,
+                                            receiver: new PublicKey(receiverWallet),
+                                            systemProgram: web3.SystemProgram.programId,
+                                        })
+                                        .signers([wallet.publicKey])
+                                    .rpc();
+
+                        
                         const res = await transferFund(senderWallet, receiverWallet, currencies.find(currencies => currencies.key === currency)?.value || 'SOL', Number(amount),signature)
                         if(res) {
                             toast.success("Fund transfered successfully");
