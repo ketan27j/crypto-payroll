@@ -146,7 +146,7 @@ export const AddEmployee = () => {
                     "AKZzQ4yWNycMQVxPni8UtkPSkWqu6chj5DuTfdnNCY82"
                     );
                     const receiver: PublicKey = new PublicKey(
-                    "EdATZPBUYuvdgyUyApMc1AohtQ1KV7SPDJMYehritzvp"
+                    "2R3u2kQYyhTjaXCRuXnHvbQ2um2JmTCEr6TfHsu7BZ5R"
                     );
                     // const initialSenderBalance = await provider.connection.getBalance(sender);
                     // const initialReceiverBalance = await provider.connection.getBalance(

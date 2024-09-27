@@ -1,6 +1,7 @@
 "use client"
 import { WalletContextState } from "@solana/wallet-adapter-react";
 import { Connection, Keypair, LAMPORTS_PER_SOL, PublicKey, SystemProgram, Transaction } from "@solana/web3.js";
+import bs58 from 'bs58';
 
 export async function getBalance(connection:Connection, walletAddress: string) {
     const address = new PublicKey(walletAddress);
@@ -43,5 +44,20 @@ export async function checkValidWallet(connection: Connection, walletAddress: st
         return PublicKey.isOnCurve(address);
     } catch (error) {
         return false;
+    }
+}
+
+export async function getFeePayerKeyPair() {
+    try
+    {
+        let base58PrivateKey = process.env.WALLET_PRIVATE_KEY || '';
+        base58PrivateKey = "2iTouTNin3MtKQtQLkT7dPH2FdSjgwWJ3k3qjPftBtLp2fqddXnB6erqyt9kvMC7odjnE51QinJZ1Ji77hDKV8U2"
+        console.log('base58PrivateKey', base58PrivateKey);
+        const privateKeyBuffer = bs58.decode(base58PrivateKey);
+        return Keypair.fromSecretKey(privateKeyBuffer);
+    }
+    catch(error) {
+        console.log('error in getFeeyPayerKeyPair', error);
+        throw new Error("Invalid base58 private key");
     }
 }
