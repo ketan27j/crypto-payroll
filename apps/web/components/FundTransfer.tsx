@@ -5,11 +5,21 @@ import { TextInput } from "@repo/ui/textInput";
 import { Select } from "@repo/ui/select";
 import toast from "react-hot-toast";
 import { transferFund } from "../app/lib/actions/fundTransfer";
-import { checkValidWallet, getBalance, transferSol } from "../app/lib/actions/solanaOps";
+import { checkValidWallet, getBalance, getFeePayerKeyPair, transferSol } from "../app/lib/actions/solanaOps";
 import { useEffect, useState } from "react";
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import { z } from "zod";
-
+import * as anchor from "@coral-xyz/anchor";
+import { Program, Idl } from "@coral-xyz/anchor";
+import idl from '../app/lib/actions/solana/scOutput/sol_transfer.json';
+import { SolTransfer } from '../app/lib/actions/solana/scOutput/sol_transfer';
+import { PublicKey } from "@solana/web3.js";
+import {
+    Provider,
+    BN,
+    web3,
+  } from '@project-serum/anchor';
+  
 const fundTransferSchema = z.object({
     senderWallet: z.string().min(1, "Sender wallet is required"),
     receiverWallet: z.string().min(1, "Receiver wallet is required"),
@@ -62,7 +72,7 @@ export const FundTranser = () => {
             <div className="flex gap-4">
                 <input onChange={(e) => {setSenderWallet(e.target.value)}} value={senderWallet} type="text" id="txtSendWallet" 
                     className="flex-auto bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5 w-3/5" 
-                    placeholder="Sender Wallet Address" readOnly/>
+                    placeholder="Sender Wallet Address"/>
                 <button
                     onClick={async () => {
                         const balance = await getBalance(connection,senderWallet);
@@ -102,18 +112,35 @@ export const FundTranser = () => {
                     if (!validateForm()) return;
                     setIsLoading(true);
                     try {
-                        const signature = await transferSol(connection, wallet, receiverWallet, parseFloat(amount))
-                        const res = await transferFund(senderWallet, receiverWallet, currencies.find(currencies => currencies.key === currency)?.value || 'SOL', Number(amount),signature)
-                        if(res) {
-                            toast.success("Fund transfered successfully");
-                            setReceiverWallet("");
-                            setSenderBalance(0);
-                            setAmount("0");
-                        } else {
-                            toast.error("An error occurred during transfer");
-                        }
+                        //const signature = await transferSol(connection, wallet, receiverWallet, parseFloat(amount))
+                        const scheduledTime = new anchor.BN(Date.now() / 1000 + 60);
+                        const transAmount = new anchor.BN(1e8);
+                        const provider = new anchor.AnchorProvider(connection, wallet, {});
+                        const program = new Program(idl, provider) as Program<SolTransfer>;
+                        //const signerAccount = await getFeePayerKeyPair();
+                        const tx = await program.methods
+                                        .transferSol(transAmount, scheduledTime)
+                                        .accounts({
+                                            sender: new PublicKey(senderWallet),
+                                            receiver: new PublicKey(receiverWallet),
+                                            systemProgram: web3.SystemProgram.programId,
+                                        })
+                                        //.signers([signerAccount])
+                                    .rpc();
+
+                        
+                        // const res = await transferFund(senderWallet, receiverWallet, currencies.find(currencies => currencies.key === currency)?.value || 'SOL', Number(amount),signature)
+                        // if(res) {
+                        //     toast.success("Fund transfered successfully");
+                        //     setReceiverWallet("");
+                        //     setSenderBalance(0);
+                        //     setAmount("0");
+                        // } else {
+                        //     toast.error("An error occurred during transfer");
+                        // }
                     } catch (e) {
                         toast.error("An error occurred during transfer");
+                        console.log('error', e);
                     } finally {
                         setIsLoading(false);
                     }
