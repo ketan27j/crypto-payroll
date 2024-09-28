@@ -29,6 +29,9 @@ export default async function Layout({
                   { CanActivate(['Admin','ClientAdmin']) &&
                     <SidebarItem href={"/fundtransfer"} icon={<TransactionsIcon />} title="Fund Transfer" />
                   }
+                  { CanActivate(['Admin','ClientAdmin']) &&
+                    <SidebarItem href={"/scheduling"} icon={<SchedulingIcon />} title="Scheduling" />
+                  }
               </div>
           </div>
               {children}
@@ -82,5 +85,9 @@ function AccountIcon() {
   return <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="size-6">
   <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
 </svg>
-
+}
+function SchedulingIcon() {
+  return <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="size-6">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+        </svg>
 }

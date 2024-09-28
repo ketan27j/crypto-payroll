@@ -115,12 +115,17 @@ export const FundTranser = () => {
                         //const signature = await transferSol(connection, wallet, receiverWallet, parseFloat(amount))
                         const scheduledTime = new anchor.BN(Date.now() / 1000 + 60);
                         const transAmount = new anchor.BN(1e8);
-                        const provider = new anchor.AnchorProvider(connection, wallet, {});
-                        const program = new Program(idl, provider) as Program<SolTransfer>;
+                        const provider = new anchor
+                                                .AnchorProvider(
+                                                    connection, 
+                                                    wallet as unknown as anchor.Wallet, 
+                                                    {}
+                                                );
+                        const program = new Program(idl as Idl, provider) as unknown as Program<SolTransfer>;
                         //const signerAccount = await getFeePayerKeyPair();
                         const tx = await program.methods
                                         .transferSol(transAmount, scheduledTime)
-                                        .accounts({
+                                        .accountsPartial({
                                             sender: new PublicKey(senderWallet),
                                             receiver: new PublicKey(receiverWallet),
                                             systemProgram: web3.SystemProgram.programId,
