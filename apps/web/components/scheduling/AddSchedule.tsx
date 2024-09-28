@@ -136,12 +136,12 @@ export const EventCalendar: React.FC = () => {
           const eventsForDate = events.filter(e => e.date.toDateString() === date.toDateString());
           return eventsForDate.length > 0 ? (
             <div className="flex justify-center items-center">
-              <div className="h-2 w-2 bg-blue-500 rounded-full"></div>
+              <div className="h-3 w-3 bg-blue-500 rounded-full"></div>
             </div>
           ) : null;
         }}
+        className="w-full max-w-lg mx-auto text-lg shadow-lg rounded-lg"
       />
-
       <AnimatePresence>
         {isModalOpen && (
           <motion.div
