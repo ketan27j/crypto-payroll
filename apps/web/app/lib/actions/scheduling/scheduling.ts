@@ -96,7 +96,7 @@ export async function getEventsForYearRange(): Promise<EventInfo[]> {
     id: event.id,
     type: event.type,
     title: event.title,
-    description: event.description,
+    description: event.description || '',
     date: event.date,
     time: event.time,
     createdAt: event.createdAt,
