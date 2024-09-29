@@ -1,30 +1,28 @@
+import nodemailer from 'nodemailer';
 
-import axios from 'axios'
-
-export async function sendNotification(to: string, receiverName: string, subject: string, htmlContent: string) {
-    const apiKey = process.env.BREVO_API_KEY
-    const url = 'https://api.brevo.com/v3/smtp/email'
-
-    const data = {
-        sender: { email: process.env.GMAIL_FROM_EMAIL, name: 'Dapp Admin' },
-        to: [{ email: to, name: receiverName }],
-        subject: subject,
-        htmlContent: htmlContent
-    }
-
-    try {
-        const response = await axios.post(url, data, {
-            headers: {
-                'accept': 'application/json',
-                'api-key': apiKey,
-                'content-type': 'application/json'
-            }
-        })
-
-        console.log('Brevo Email sent successfully:', response.data)
-        return response.data
-    } catch (error) {
-        console.error('Error sending email:', error)
-        throw error
-    }
-}
+export async function sendNotification(to: string, from: string, subject: string, body: string, buttonUrl: string) {
+    console.log(`Sending email from: ${process.env.GMAIL_USER}, to: ${to}`);
+    const transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: process.env.GMAIL_USER,
+        pass: process.env.GMAIL_PASSWORD // Use an app password for better security
+      }
+    });
+    // Set up email data
+    let mailOptions = {
+      from: process.env.GMAIL_USER, // Sender address
+      to: to, // List of recipients
+      subject: subject, // Subject line
+      //text: body, // Plain text body
+      html: body // HTML body
+    };
+  
+    // Send mail with defined transport object
+    transporter.sendMail(mailOptions, (error, info) => {
+      if (error) {
+          return console.log(error);
+      }
+      console.log('Message sent: %s', info.messageId);
+    });
+  };
