@@ -149,5 +149,6 @@ export async function getAllEmployees(): Promise<EmployeeInfo[]> {
 }
 
 export async function getReclaimAppCallbackUrl(): Promise<string> {
-  return process.env.RECLAIM_APP_CALLBACK_URL || '';
+  console.log('getReclaimAppCallbackUrl', process.env.RECLAIM_CALLBACK_URL);
+  return process.env.RECLAIM_CALLBACK_URL || '';
 }
