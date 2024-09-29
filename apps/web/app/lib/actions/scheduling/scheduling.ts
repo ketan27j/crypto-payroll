@@ -1,8 +1,8 @@
 "use server";
 import prisma from "@repo/db";
-import { sendEmail } from "../employee";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../../auth";
+import { sendNotification } from "../notification";
 const schedule = require('node-schedule');
 
 export interface EventInfo {
@@ -15,7 +15,6 @@ export interface EventInfo {
     createdAt: Date;
     createdBy: number;
 }
-
 
 export async function addOrUpdateEvent(eventInfo: EventInfo) {
   const { id, type, title, description, date, time, createdBy } = eventInfo;
@@ -69,7 +68,20 @@ export async function scheduleEvent(eventId: number, title: string, scheduleDate
   console.log('cronExpression', cronExpression);
     schedule.scheduleJob(cronExpression, function(){
         console.log(`Starting as scheduled: Event eventId: ${eventId}, title: ${title} scheduled for: ${scheduleDate.toDateString()} at ${time}`);
-        sendEmail(eventOwner.email, eventOwner.name, `Scheduled Event Triggered: ${title}`, `Event: ${title} scheduled for: ${scheduleDate.toDateString()} at ${time}`, '');
+        // sendEmail(eventOwner.email, eventOwner.name, `Scheduled Event Triggered: ${title}`, `Event: ${title} scheduled for: ${scheduleDate.toDateString()} at ${time}`, '');
+        let body = `Event: ${title} scheduled for: ${scheduleDate.toDateString()} at ${time}`;
+        let redirect_url = `${(process.env.APP_URL || 'http://localhost:3000')}/profile`;
+
+        let htmlContent = `
+            <html>
+              <body>
+                <h2>${body}</h2>
+                <br><br>
+                <a href="${redirect_url}" style="background-color: #4CAF50; border: none; color: white; padding: 15px 32px; text-align: center; text-decoration: none; display: inline-block; font-size: 16px; margin: 4px 2px; cursor: pointer;">Click Here</a>
+              </body>
+            </html>
+          `;
+        sendNotification('decentralizedappengineering@gmail.com', eventOwner.name, `Scheduled Event Triggered: ${title}`, htmlContent , '');
     });
     
   console.log(`Event owner: ${eventOwner.name} eventId: ${eventId}, title: ${title} scheduled for: ${scheduleDate.toDateString()} at ${time}`);
