@@ -2,6 +2,7 @@
 import { Reclaim } from '@reclaimprotocol/js-sdk';
 import { useState } from'react'
 import QRCode from "react-qr-code";
+import { getReclaimAppCallbackUrl } from '../../lib/actions/employee';
 
 export default function() {
 
@@ -29,7 +30,9 @@ export default function() {
             )
         )
 
-        reclaimClient.setAppCallbackUrl('https://crypto-payroll-web.vercel.app/api/profile/zkproof?obj=3tm34k590u8t')
+        // reclaimClient.setAppCallbackUrl('https://crypto-payroll-web.vercel.app/api/profile/zkproof?obj=3tm34k590u8t')
+        reclaimClient.setAppCallbackUrl(`${getReclaimAppCallbackUrl()}?obj=3tm34k590u8t`)
+ 
         const { requestUrl, statusUrl } = await reclaimClient.createVerificationRequest()
    
         setUrl(requestUrl)

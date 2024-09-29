@@ -87,9 +87,6 @@ export async function addEmployee(employeeInfo: EmployeeInfo) {
   }
 }
 
-
-
-
 export async function getAllEmployees(): Promise<EmployeeInfo[]> {
   try {
     const session = await getServerSession(authOptions);
@@ -151,17 +148,6 @@ export async function getAllEmployees(): Promise<EmployeeInfo[]> {
   }
 }
 
-
-// const result = await sendEmail(
-//   'recipient@example.com',
-//   'sender@example.com',
-//   'Test Subject',
-//   'This is the email body content.',
-//   'http://localhost:3000/some-path'
-// );
-
-// if (result) {
-//   console.log('Email sent successfully');
-// } else {
-//   console.log('Failed to send email');
-// }
+export async function getReclaimAppCallbackUrl(): Promise<string> {
+  return process.env.RECLAIM_APP_CALLBACK_URL || '';
+}
