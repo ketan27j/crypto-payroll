@@ -92,6 +92,20 @@ model Event {
   createdBy Int
 }
 
+model Token {
+  id            Int      @id @default(autoincrement())
+  token         String
+  name          String
+  symbol        String
+  description   String
+  image         String?
+  initSupply    Int
+  mintAuthority String
+  createdAt     DateTime @default(now())
+  createdBy     Int
+  isActive      Boolean? @default(true)
+}
+
 enum EventType {
   SalaryPayment
   BonusPayment
