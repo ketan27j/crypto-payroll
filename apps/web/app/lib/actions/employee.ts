@@ -199,7 +199,6 @@ export async function getEmployeeByUserId(userId: number): Promise<EmployeeInfo 
       },
     });
     const employee = employees[0];
-console.log('employee------------------------------------------', employee);
     if (!employee) {
       return null;
     }
@@ -215,12 +214,12 @@ console.log('employee------------------------------------------', employee);
       allowances: employee.allowances || 0,
       isActive: employee.isActive,
       clientId: employee.clientId,
-      addressLine1: employee.addressLine1 || null,
-      addressLine2: employee.addressLine2 || null,
-      city: employee.city || null,
-      state: employee.state || null,
-      country: employee.country || null,
-      taxJurisdiction: employee.taxJurisdiction || null,
+      addressLine1: null,
+      addressLine2: null,
+      city: null,
+      state: null,
+      country: null,
+      taxJurisdiction: null,
     };
 
     return employeeInfo;
