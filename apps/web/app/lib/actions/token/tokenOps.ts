@@ -14,7 +14,7 @@ export async function createToken(connection: Connection, wallet: WalletContextS
         mint: mintKeypair.publicKey,
         name: name,
         symbol: symbol,
-        uri: metadataUri,
+        uri: 'https://crypto-payroll-web.vercel.app/token-metadata/TST-metadata.json',
         additionalMetadata: [],
     };
     const mintLen = getMintLen([ExtensionType.MetadataPointer]);

@@ -2,5 +2,5 @@
   "name": "TEST",
   "symbol": "TST",
   "description": "TEST",
-  "image": "http:/localhost:3000/token-metadata/1727620959091-token.jpg"
+  "image": "https://crypto-payroll-web.vercel.app/token-metadata/1727620959091-token.jpg"
 }

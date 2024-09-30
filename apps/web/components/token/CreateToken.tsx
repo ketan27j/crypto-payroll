@@ -128,8 +128,8 @@ export const CreateToken = () => {
                     const metadataUri = await saveTokenMetadata(name, symbol, description, image || "");
                     console.log(metadataUri);
                     const token = await createToken(connection, wallet, name, symbol,description, metadataUri, initSupply);
-                    // const res = await saveToken(wallet.publicKey?.toString()||"", name, symbol, description, image, initSupply, token);
-                    if(true) {
+                    const res = await saveToken(wallet.publicKey?.toString()||"", name, symbol, description, image, initSupply, token);
+                    if(res) {
                         toast.success("Token created successfully");
                         setName("");
                         setSymbol("");
