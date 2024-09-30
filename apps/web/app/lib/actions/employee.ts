@@ -87,9 +87,6 @@ export async function addEmployee(employeeInfo: EmployeeInfo) {
   }
 }
 
-
-
-
 export async function getAllEmployees(): Promise<EmployeeInfo[]> {
   try {
     const session = await getServerSession(authOptions);
@@ -151,17 +148,89 @@ export async function getAllEmployees(): Promise<EmployeeInfo[]> {
   }
 }
 
+export async function getReclaimAppCallbackUrl(): Promise<string> {
+  console.log('getReclaimAppCallbackUrl', process.env.RECLAIM_CALLBACK_URL);
+  return process.env.RECLAIM_CALLBACK_URL || '';
+}
 
-// const result = await sendEmail(
-//   'recipient@example.com',
-//   'sender@example.com',
-//   'Test Subject',
-//   'This is the email body content.',
-//   'http://localhost:3000/some-path'
-// );
 
-// if (result) {
-//   console.log('Email sent successfully');
-// } else {
-//   console.log('Failed to send email');
-// }
+
+
+export async function updateEmployeeWallet(wallet: string): Promise<boolean> {
+  try {
+    const session = await getServerSession(authOptions);
+    if (!session?.user) {
+      return false;
+    }
+
+    const userId = Number(session.user.id);
+    const emps = await prisma.employee.findMany({
+      where: {
+        userId: userId
+      },
+    });
+
+    console.log('updating wallet of employeeId: ', emps[0]?.id);
+    const updatedEmployee = await prisma.employee.update({
+      where: {
+        id: emps[0]?.id,
+      },
+      data: {
+        wallet: wallet,
+      },
+    });
+
+    return !!updatedEmployee;
+  } catch (error) {
+    console.error('Error updating employee wallet:', error);
+    return false;
+  }
+}
+
+export async function getEmployeeByUserId(userId: number): Promise<EmployeeInfo | null> {
+  try {
+    const employees = await prisma.employee.findMany({
+      where: {
+        userId: userId,
+      },
+      include: {
+        user: true,
+        client: true,
+      },
+    });
+    const employee = employees[0];
+console.log('employee------------------------------------------', employee);
+    if (!employee) {
+      return null;
+    }
+
+    const employeeInfo: EmployeeInfo = {
+      id: employee.id,
+      email: employee.user.email,
+      name: employee.user.name,
+      designation: employee.designation,
+      functionalTitle: employee.functionalTitle,
+      wallet: employee.wallet,
+      salary: employee.salary,
+      allowances: employee.allowances || 0,
+      isActive: employee.isActive,
+      clientId: employee.clientId,
+      addressLine1: employee.addressLine1 || null,
+      addressLine2: employee.addressLine2 || null,
+      city: employee.city || null,
+      state: employee.state || null,
+      country: employee.country || null,
+      taxJurisdiction: employee.taxJurisdiction || null,
+    };
+
+    return employeeInfo;
+  } catch (error) {
+    console.error('Error fetching employee:', error);
+    return null;
+  }
+}
+
+export async function getReclaimAppSecret(): Promise<string> {
+  console.log('getReclaimAppSecret', process.env.RECLAIM_APP_SECRET);
+  return process.env.RECLAIM_APP_SECRET || '';
+}

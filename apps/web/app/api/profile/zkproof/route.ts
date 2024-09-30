@@ -31,15 +31,33 @@ export async function POST(req: NextRequest, res: any) {
     const session = await getServerSession(authOptions);
     console.log('zkproof POST req.query', req.nextUrl.searchParams.get('obj'));
     console.log('zkproof POST req.body', req.body);
-    if (session) {
-        return NextResponse.json({
-            user: session.user,
-            proof: 'ZKProof'
-        })
-    }
-    return NextResponse.json({
-        message: "You are not logged in"
-    }, {
-        status: 403
-    })
+ 
+    // const sessionId = req.nextUrl.searchParams.get('obj');
+    // //const sessionId = req.query.callbackId
+    // const proof = JSON.parse(decodeURIComponent(req.body))
+   
+    // const isProofVerified = await ReclaimClient.verifySignedProof(proof)
+    // if (!isProofVerified) {
+    //   return res.status(400).send({ message: 'Proof verification failed' })
+    // }
+   
+    // const context = proof.claimData.context
+    // const extractedParameterValues = proof.extractedParameterValues
+    // TODO: Verify with the context depending on your business logic
+    // TODO: Save the proof to your backend
+   
+    return res.status(200).send({ message: 'Proof verified' })
+ 
+ 
+    // if (session) {
+    //     return NextResponse.json({
+    //         user: session.user,
+    //         proof: 'ZKProof'
+    //     })
+    // }
+    // return NextResponse.json({
+    //     message: "You are not logged in"
+    // }, {
+    //     status: 403
+    // })
 }
