@@ -53,7 +53,6 @@ export default function() {
         
         const providerId = 'f9f383fd-32d9-4c54-942f-5e9fda349762'
 
-
         reclaimClient.addContext(
             (`${userWallet}`),
             (`${session?.user?.email}`),
