@@ -4,7 +4,7 @@ import { authOptions } from "../../lib/auth";
 
 export async function GET(req: any, res: any) {
     const session = await getServerSession(authOptions);
-    console.log('API session', session);
+    // console.log('API session', session);
     if (session) {
         return NextResponse.json({
             user: session.user
