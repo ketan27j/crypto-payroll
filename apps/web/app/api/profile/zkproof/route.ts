@@ -28,9 +28,9 @@ export async function GET(req: NextRequest, res: any) {
 }
 
 export async function POST(req: NextRequest, res: any) {
-    const session = await getServerSession(authOptions);
-    console.log('zkproof POST req.query', req.nextUrl.searchParams.get('obj'));
+    console.log('zkproof POST req.query');
     console.log('zkproof POST req.body', req.body);
+    const session = await getServerSession(authOptions);
  
     // const sessionId = req.nextUrl.searchParams.get('obj');
     // //const sessionId = req.query.callbackId

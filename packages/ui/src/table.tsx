@@ -49,16 +49,16 @@ export const Table: React.FC<TableProps> = ({ data, columns }) => {
       </table>
       <div className="flex items-center justify-between p-4 bg-white dark:bg-gray-800">
         <div className="flex space-x-2">
-          <button onClick={() => table.setPageIndex(0)} disabled={!table.getCanPreviousPage()} className="px-3 py-1 bg-blue-500 text-white rounded disabled:opacity-50">
+          <button onClick={() => table.setPageIndex(0)} disabled={!table.getCanPreviousPage()} className="px-3 py-1 bg-blue-500 text-white rounded">
             {'<<'}
           </button>
-          <button onClick={() => table.previousPage()} disabled={!table.getCanPreviousPage()} className="px-3 py-1 bg-blue-500 text-white rounded disabled:opacity-50">
+          <button onClick={() => table.previousPage()} disabled={!table.getCanPreviousPage()} className="px-3 py-1 bg-blue-500 text-white rounded">
             {'<'}
           </button>
-          <button onClick={() => table.nextPage()} disabled={!table.getCanNextPage()} className="px-3 py-1 bg-blue-500 text-white rounded disabled:opacity-50">
+          <button onClick={() => table.nextPage()} disabled={!table.getCanNextPage()} className="px-3 py-1 bg-blue-500 text-white rounded">
             {'>'}
           </button>
-          <button onClick={() => table.setPageIndex(table.getPageCount() - 1)} disabled={!table.getCanNextPage()} className="px-3 py-1 bg-blue-500 text-white rounded disabled:opacity-50">
+          <button onClick={() => table.setPageIndex(table.getPageCount() - 1)} disabled={!table.getCanNextPage()} className="px-3 py-1 bg-blue-500 text-white rounded">
             {'>>'}
           </button>
         </div>

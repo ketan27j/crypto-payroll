@@ -1,61 +1,59 @@
+
 "use client"
+import React, { useState, useEffect } from 'react';
+import { useWallet, useConnection } from '@solana/wallet-adapter-react';
+import { Button } from "@repo/ui/button";
+import { Card } from "@repo/ui/card";
+import { TextInput } from "@repo/ui/textInput";
+import '@solana/wallet-adapter-react-ui/styles.css';
+import { useSession } from 'next-auth/react';
 import { Reclaim } from '@reclaimprotocol/js-sdk';
 import QRCode from "react-qr-code";
-import { getEmployeeByUserId, getReclaimAppCallbackUrl, getReclaimAppSecret, updateEmployeeWallet } from '../../lib/actions/employee';
-
-import { useEffect, useState } from "react";
-import { ConnectionProvider, WalletProvider } from '@solana/wallet-adapter-react';
-import {
-    WalletModalProvider,
-    WalletDisconnectButton,
-    WalletMultiButton
-} from '@solana/wallet-adapter-react-ui';
-import '@solana/wallet-adapter-react-ui/styles.css';
-import { useWallet } from "@solana/wallet-adapter-react";
-
-import { getServerSession } from "next-auth";
-import { authOptions } from "../../lib/auth";
+import { getEmployeeByUserId, getReclaimAppCallbackUrl, getReclaimAppSecret, updateEmployeeWallet } from '../../app/lib/actions/employee';
 import { getSession } from 'next-auth/react';
-import TabBasedProfile from '../../../components/Profile/TabBasedProfile';
+import toast from "react-hot-toast";
 
-export default function() {
-
-    const [url, setUrl] = useState('')
-    
-    const [userWallet, setUserWallet] = useState<string>("");
+export const WalletInfo = () => {
+    const { publicKey, connect, connected } = useWallet();
+    const [walletAddress, setWalletAddress] = useState<string | null>(null);
+    const [showWalletConnect, setShowWalletConnect] = useState(false);
+    const session = useSession();
     const wallet = useWallet();
+    const { connection } = useConnection();
+    const [url, setUrl] = useState('')
+    const [successfullySaved, setSuccessfullySaved] = useState(false)
 
     const APP_ID = "0xe04c9046f780d95F062f6Fd14B56f9025Bd6FDAA";
     const reclaimClient = new Reclaim.ProofRequest(APP_ID)
 
- 
-    const FundTranser = () => {
-        useEffect(() => {
-            const publicKey = wallet.publicKey ? wallet.publicKey.toString() : "";
-            console.log('useEffect', publicKey);
-            setUserWallet(publicKey);
-        }, [wallet.publicKey]);
-        return (
-            <div>
-            <label className="block mb-2 text-sm font-medium text-gray-900 pt-2">Sender Wallet Address</label>
-            <div className="flex gap-4">
-                <input onChange={(e) => {setUserWallet(e.target.value)}} value={userWallet} type="text" id="txtSendWallet" 
-                    className="flex-auto bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5 w-3/5" 
-                    placeholder="Sender Wallet Address"/>
-                </div>
-            </div>
-        )
-    
-    }    
-    
+    useEffect(() => {
+
+        getEmployeeByUserId(session.data?.user?.email || '').then((res) => {
+            if (res) {
+                console.log('walletInfo length', res.wallet?.length);
+                if(res.wallet && res.wallet.length > 31 && res.wallet.length < 45) {
+                    setWalletAddress(res.wallet);
+                }
+                else {
+                    setWalletAddress(null);
+                    setShowWalletConnect(true);
+                }
+            }
+        });
+    }, []);
+
+    const handleLinkWallet = () => {
+        setShowWalletConnect(true);
+    };
+
+        
     async function generateVerificationRequest() {
-        console.log('userWallet', userWallet);
         const session = await getSession();
         
         const providerId = 'f9f383fd-32d9-4c54-942f-5e9fda349762'
 
         reclaimClient.addContext(
-            (`${userWallet}`),
+            (`${walletAddress}`),
             (`${session?.user?.email}`),
         )
 
@@ -111,49 +109,52 @@ export default function() {
               console.log('walletKey', walletKey)
               console.log('userEmail', userEmail)
               await updateEmployeeWallet(walletKey);
+              toast.success("The new wallet address is successfully saved");
+              setSuccessfullySaved(true);
+              setUrl('');
             },
             onFailureCallback: error => {
               console.error('Verification failed', error)
             }
           })
     }
-    
-    return <div className="w-full">
-        <TabBasedProfile></TabBasedProfile>
-        {/* <div className="grid grid-cols-1 gap-4 md:grid-cols-2 p-4">
-            <div className="w-full">
-                <div style={{ display: "flex", alignItems: "center", justifyContent: "center", height: "50vh" }}>
-                    {!url && (
-                        <button onClick={generateVerificationRequest}
-                        className={`px-4 py-2 rounded-md text-white bg-gray-800 hover:bg-gray-700`}
-                        >
-                        Create Claim QrCode
-                        </button>
-                    )}
-                    {!userWallet && <FundTranser></FundTranser>
+
+    return (
+        <Card title="Set Wallet Address">
+            <div className="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 mb-4">
+                <p className="font-bold">Important:</p>
+                <p>The wallet address entered here will be used for your salary payments.</p>
+            </div>
+                <div>
+                    <TextInput
+                        label="Wallet Address"
+                        value={walletAddress || ''}
+                        readOnly={false} 
+                        placeholder={''} 
+                        onChange={function (value: string): void {
+                            setWalletAddress(value);
+                        } }                
+                    />
+                    <br/>
+                    {!url && walletAddress &&        
+                    <Button onClick={generateVerificationRequest}>
+                        Change (Requires Authentication)
+                    </Button>
                     }
-                    {url && (
+                    <br/>
+                    {url && !successfullySaved && (
                         <>
+                        <h3 className='mt-3 mb-3 font-bold'>Scan the QR code to verify your identity</h3>
                             <QRCode value={url} />
                         </>
                     )}
+                    <br/>
+                    {successfullySaved &&
+                    <div className="bg-green-100 border-l-4 border-yellow-500 text-yellow-700 p-4 mb-4">
+                        <p>The new wallet address is successfully saved.</p>
+                    </div>
+                }
                 </div>
-                <div>
-                    <ConnectionProvider endpoint={process.env.SOLANA_ENDPOINT || "https://api.devnet.solana.com"}>
-                        <WalletProvider wallets={[]} autoConnect>
-                            <WalletModalProvider>
-                                <div style={{
-                                    display: 'flex',
-                                    justifyContent: 'space-between',
-                                    padding: 20 }}>
-                                    <WalletMultiButton />
-                                    <WalletDisconnectButton />
-                                </div>
-                            </WalletModalProvider>
-                        </WalletProvider>
-                    </ConnectionProvider>
-                </div>
-            </div>
-        </div> */}
-    </div>
-}
+        </Card>
+    );
+};
