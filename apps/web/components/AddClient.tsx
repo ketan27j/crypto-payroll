@@ -20,7 +20,7 @@ const addClientSchema = z.object({
     wallet: z.string().min(1, "Wallet is required"),
   });
 
-export const AddClient = () => {
+export const AddClient: React.FC<{ onClose?: () => void }> = ({ onClose }) => {
     const [name, setName] = useState<string>("");
     const [email, setEmail] = useState<string>("");
     const [number, setNumber] = useState<string>("");
@@ -44,7 +44,28 @@ export const AddClient = () => {
            
         return true;
       };  
-    return <Card title="Add Client Information">
+    
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!validateForm()) return;
+        const res = await addClient(name, email, number, password, wallet);
+        if(res) {
+            toast.success("Client added successfully");
+            setName("");
+            setNumber("");
+            setPassword("");
+            setEmail("");
+            setWallet("");
+            setClientState(clientState+1);
+            if (onClose) {
+                onClose();
+            }
+        } else {
+            toast.error("Something went wrong");
+        }
+    };
+
+    return <Card title="Client Information">
         <div>
             <TextInput label="Name" placeholder="Name" value={name} onChange={(value) => {setName(value)}} />
             <TextInput label="Email" placeholder="Email" value={email || ""} onChange={(value) => {setEmail(value)}} />
@@ -52,21 +73,7 @@ export const AddClient = () => {
             <TextInput label="Password" placeholder="Password" value={password || ""} onChange={(value) => {setPassword(value)}} />
             <TextInput label="Wallet" placeholder="Wallet" value={wallet || ""} onChange={(value) => {setWallet(value)}} />
             <div className="flex justify-center pt-4">               
-                <Button onClick={async () => {
-                    if (!validateForm()) return;
-                    const res = await addClient(name, email, number, password, wallet);
-                    if(res) {
-                        toast.success("Client added successfully");
-                        setName("");
-                        setNumber("");
-                        setPassword("");
-                        setEmail("");
-                        setWallet("");
-                        setClientState(clientState+1);
-                    } else {
-                        toast.error("Something went wrong");
-                    }
-                }}>Add Client</Button>
+                <Button onClick={handleSubmit}>Add Client</Button>
             </div> 
         </div>
         </Card>

@@ -37,7 +37,7 @@ import {
     sendAndConfirmTransaction,
 } from "@solana/web3.js";
 
-export const AddEmployee = () => {
+export const AddEmployee: React.FC<{ onClose?: () => void }> = ({ onClose }) => {
     const [step, setStep] = useState(1)
     let defaultEmp: EmployeeInfo = {
         id: 0,
@@ -113,10 +113,27 @@ export const AddEmployee = () => {
 
         return true;
     };
+    
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!validateForm()) return;
+        const res = await addEmployee(employeeData);
+        if (res) {
+            toast.success("Employee added successfully");
+            setEmployeeData(defaultEmp);
+            setStep(1);
+            setEmployeeState(employeeState + 1);
+            if (onClose) {
+                onClose();
+            }
+        } else {
+            toast.error("Something went wrong");
+        }
+    };
 
 
     return (
-        <Card title="Add Employee">
+        <Card title="Employee Information">
             <div className="max-w-4xl mx-auto p-4 w-full">
                 <div className="bg-white dark:bg-gray-800 shadow-lg rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
                     <div className="px-6 py-8">
@@ -137,19 +154,7 @@ export const AddEmployee = () => {
                                 </Button>
                             ) : (
                                 <Button
-                                    onClick={async () => {
-                                        if (!validateForm()) return;
-                                        const res = await addEmployee(employeeData);
-                                        if (res) {
-                                            toast.success("Employee added successfully");
-                                            setEmployeeData(defaultEmp);
-                                            setStep(1);
-                                            setEmployeeState(employeeState + 1);
-                                        } else {
-                                            toast.error("Something went wrong");
-                                        }
-                                    }}
-                                // className="w-full sm:w-auto"
+                                    onClick={handleSubmit}
                                 >
                                     Add Employee
                                 </Button>
