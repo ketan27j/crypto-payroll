@@ -1,11 +1,12 @@
 import fs from 'fs';
 import path from 'path';
 import { NextApiRequest, NextApiResponse } from 'next';
+import { NextRequest, NextResponse } from 'next/server';
 
-export async function GET(req: NextApiRequest, res: NextApiResponse) {
+export async function GET(req: NextRequest) {
     console.log('image api called for: ', req.url);
-    if(!req?.url) { return res.status(500); }
-    if(req.url.indexOf('..') >= 0) { return res.status(400); }
+    if(!req?.url) { return NextResponse.json({ success: false, message: 'No url received' }, { status: 500 })}
+    if(req.url.indexOf('..') >= 0) { return NextResponse.json({ success: false, message: 'Invalid url' }, { status: 400 })}
 
     try {
         // const filePath = path.join(process.cwd(), 'public', dir);
@@ -15,8 +16,8 @@ export async function GET(req: NextApiRequest, res: NextApiResponse) {
 
         // Read and serve the file
         const data = await fs.promises.readFile(filePath);
-        return new Response(data, {});
+        return new NextResponse(data, {});
     } catch (error) {
-        res.status(500).json({ error: 'Failed to fetch file' });
+        return NextResponse.json({ success: false, message: 'Failed to fetch file' }, { status: 500 })
     }
 }
