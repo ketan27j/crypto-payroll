@@ -17,7 +17,7 @@ interface FormData {
     name: string;
     symbol: string;
     initSupply: string;
-    walletPublicKey: PublicKey | null;
+    wallet?: string;
     image?: File;
 }
 
@@ -30,14 +30,13 @@ const addClientSchema = z.object({
     }).refine((file) => ['image/jpeg','image/jpg','image/png'].includes(file.type), {
         message: "Only JPEG and PNG files are allowed",
     }),
-    initSupply: z.coerce.number({ invalid_type_error: "Initial supply must be a number" }).min(1, "Initial supply is required").max(12, "Initial supply must be at most 12 digits"),
-    wallet: z.string().min(1, "Wallet is required"),
+    initSupply: z.coerce.number({ invalid_type_error: "Initial supply must be a number",required_error:"Initial supply is required" }).gte(1, "Initial supply is required").lte(999999999999, "Initial supply must be at most 12 digits"),
+    wallet: z.string().min(1, "Please connect a wallet"),
   });
   
 export const CreateToken = () => {
     const { connection } = useConnection();
     const wallet = useWallet();
-    const walletPublicKey = wallet.publicKey;
     const [name, setName] = useState<string>("");
     const [description, setDescription] = useState<string>("");
     const [symbol, setSymbol] = useState<string>("");
@@ -46,15 +45,19 @@ export const CreateToken = () => {
     const [initSupply, setInitSupply] = useState<string>("");
     const [tokenState, setTokenState] = useRecoilState(tokenAddState);
     const validateForm = () => {
+        const walletPublicKey = wallet.publicKey?.toBase58();
         const formData :FormData = {
             name,
             symbol,
-            initSupply,
-            walletPublicKey
+            initSupply
         };
+        if(walletPublicKey) {
+            formData.wallet = walletPublicKey;
+        }
         if (imageFile) {
             formData.image = imageFile;
         }
+        console.log(formData);
         const result = addClientSchema.safeParse(formData);
         if (!result.success) {
           const errors = result.error.issues.map(issue => issue.message);
