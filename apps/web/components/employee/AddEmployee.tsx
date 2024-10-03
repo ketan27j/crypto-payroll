@@ -153,11 +153,12 @@ export const AddEmployee: React.FC<{ onClose?: () => void }> = ({ onClose }) => 
                                     Next
                                 </Button>
                             ) : (
-                                <Button
-                                    onClick={handleSubmit}
-                                >
+                                <button
+                                    onClick={handleSubmit} 
+                                    className={`px-4 py-2 rounded-md text-white bg-gray-800 hover:bg-gray-700`}>
                                     Add Employee
-                                </Button>
+                                </button>
+              
                             )}
                         </div>
                     </div>
