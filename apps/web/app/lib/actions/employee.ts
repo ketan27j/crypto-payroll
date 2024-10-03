@@ -36,6 +36,9 @@ export async function addEmployee(employeeInfo: EmployeeInfo) {
       where: {
         userId: userId,
       },
+      include: {
+        user: true,
+      }
     });
     console.log('client', client);
     if (!client) {
@@ -64,16 +67,28 @@ export async function addEmployee(employeeInfo: EmployeeInfo) {
     console.log('employeed created', employee);
     let to = employeeInfo.email || 'decentralizedappengineering@gmail.com';
     let receiverName = employeeInfo.name || 'There';
-    let subject = "Welcome to Dapp - Complete Onboarding";
-    let body = "<h1> Congratulations!! You are just one step away from onboarding to DApp!! </h1>";
-    let redirect_url = `${(process.env.APP_URL || 'http://localhost:3000')}/profile`;
+    let subject = `Welcome to ${client.user.name} - Please Complete Onboarding`;
+    let body = `<h1> Congratulations!! You are just one step away from onboarding to ${client.user.name}! </h1>`;
+    let redirect_url = `${(process.env.NEXTAUTH_URL || 'http://localhost:3000')}/api/auth/signin`;
 
     let htmlContent = `
         <html>
           <body>
             ${body}
             <br><br>
-            <a href="${redirect_url}" style="background-color: #4CAF50; border: none; color: white; padding: 15px 32px; text-align: center; text-decoration: none; display: inline-block; font-size: 16px; margin: 4px 2px; cursor: pointer;">Click Here</a>
+            Click on link below and follow the steps to complete your onboarding:
+            <br>
+            1. Enter your email and password as "test" to login
+            <br>
+            2. Navigate to Profile
+            <br>
+            3. Change your password under Settings tab
+            <br>
+            4. Verify your info under Basic Info tab
+            <br>
+            5. Set your wallet address where you want to receive your salary unders Wallet Info tab
+            <br><br>
+            <a href="${redirect_url}" style="background-color: #4CAF50; border: none; color: white; padding: 15px 32px; text-align: center; text-decoration: none; display: inline-block; font-size: 16px; margin: 4px 2px; cursor: pointer;">Complete Onboarding</a>
           </body>
         </html>
       `;
@@ -177,6 +192,7 @@ export async function updateEmployeeWallet(wallet: string): Promise<boolean> {
       },
       data: {
         wallet: wallet,
+        updatedAt: new Date()
       },
     });
 
@@ -187,17 +203,29 @@ export async function updateEmployeeWallet(wallet: string): Promise<boolean> {
   }
 }
 
-export async function getEmployeeByUserId(userId: number): Promise<EmployeeInfo | null> {
+export async function getEmployeeByUserId(email: string): Promise<EmployeeInfo | null> {
   try {
+    const userInfo = await prisma.user.findUnique({
+      where: {
+        email: email,
+      },
+    });
+    if (!userInfo) {
+      return null;
+    }
+
     const employees = await prisma.employee.findMany({
       where: {
-        userId: userId,
+        userId: userInfo.id,
       },
       include: {
         user: true,
         client: true,
       },
     });
+    if (!employees || employees.length === 0) {
+      return null;
+    }
     const employee = employees[0];
     if (!employee) {
       return null;

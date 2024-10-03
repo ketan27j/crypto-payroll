@@ -6,7 +6,7 @@ export const TextInput = ({
     label,
     value,
     type = "text",
-    readonly = false,
+    readonly = false
 }: {
     placeholder: string;
     onChange: (value: string) => void;
