@@ -73,7 +73,12 @@ export const AddClient: React.FC<{ onClose?: () => void }> = ({ onClose }) => {
             <TextInput label="Password" placeholder="Password" value={password || ""} onChange={(value) => {setPassword(value)}} />
             <TextInput label="Wallet" placeholder="Wallet" value={wallet || ""} onChange={(value) => {setWallet(value)}} />
             <div className="flex justify-center pt-4">               
-                <Button onClick={handleSubmit}>Add Client</Button>
+                {/* <Button onClick={handleSubmit}>Add Client</Button> */}
+                <button
+                  onClick={handleSubmit} 
+                  className={`px-4 py-2 rounded-md text-white bg-gray-800 hover:bg-gray-700`}>
+                  Add Client
+                </button>
             </div> 
         </div>
         </Card>

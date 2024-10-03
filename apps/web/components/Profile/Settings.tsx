@@ -60,7 +60,7 @@ export const Settings = () => {
         value={currentPassword}
         onChange={setCurrentPassword}
         placeholder="Enter current password"
-        readOnly={false}
+        readonly={false}
       />
       <TextInput
         label="New Password"
@@ -68,7 +68,7 @@ export const Settings = () => {
         value={newPassword}
         onChange={setNewPassword}
         placeholder="Enter new password"
-        readOnly={false}
+        readonly={false}
       />
       <TextInput
         label="Confirm New Password"
@@ -76,7 +76,7 @@ export const Settings = () => {
         value={confirmPassword}
         onChange={setConfirmPassword}
         placeholder="Confirm new password"
-        readOnly={false}
+        readonly={false}
       />
       <br />
       <Button onClick={handlePasswordChange}>
