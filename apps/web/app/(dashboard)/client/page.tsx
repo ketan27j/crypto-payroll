@@ -1,7 +1,7 @@
 "use client"
 import { useState } from "react";
-import { AddClient } from "../../../components/AddClient";
-import { ClientDetails } from "../../../components/ClientDetails";
+import { AddClient } from "../../../components/client/AddClient";
+import { ClientDetails } from "../../../components/client/ClientDetails";
 
 export default function ClientPage() {
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -16,11 +16,12 @@ export default function ClientPage() {
             </div>
             <button 
                 onClick={openModal}
-                className="bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 hover:from-indigo-600 hover:via-purple-600 hover:to-pink-600 text-white font-bold py-2 px-6 rounded-full shadow-lg transform transition duration-200 ease-in-out hover:scale-105"
+                className="bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded mb-4"
             >
                 Add New Client
             </button>
-            {isModalOpen && (                <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full">
+            {isModalOpen && (                
+                <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full">
                     <div className="relative top-20 mx-auto p-5 border w-3/4 max-w-4xl shadow-lg rounded-md bg-white">
                         <div className="flex justify-between items-center">
                             <h3 className="text-lg font-medium">Add New Client</h3>

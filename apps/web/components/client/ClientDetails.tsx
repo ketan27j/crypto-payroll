@@ -2,11 +2,11 @@
 import React, { useEffect, useState } from 'react';
 import { Table } from '@repo/ui/table';
 import { ColumnDef } from '@tanstack/react-table';
-import { ClientInfo, deleteClient, getClientDetails } from "../app/lib/actions/client";
+import { ClientInfo, deleteClient, getClientDetails } from "../../app/lib/actions/client";
 import {type Client} from "@prisma/client";
 import { Card } from '@repo/ui/card';
 import { useRecoilState } from 'recoil';
-import { clientAddState } from '../app/store/clientAddState';
+import { clientAddState } from '../../app/store/clientAddState';
 import toast from 'react-hot-toast';
 
 export const ClientDetails = () => {
@@ -48,7 +48,7 @@ export const ClientDetails = () => {
   ];
 
   useEffect(() => {
-    getClientDetails().then((res) => {
+    getClientDetails({}).then((res) => {
       const data = res as ClientInfo[];
       console.log(data);
       setClientDetails(data);

@@ -16,7 +16,11 @@ export const EventList: React.FC = () => {
   }, []);
 
   const currentDate = new Date();
-  const upcomingEvents = events.filter(event => new Date(event.date) >= currentDate);
+  console.log('currentDate', currentDate);
+  const upcomingEvents = events.filter(event => {
+    console.log('event.date)', new Date(event.date));
+    return new Date(event.date) > currentDate;
+  });
   const pastEvents = events.filter(event => new Date(event.date) < currentDate);
 
   const tabVariants = {
