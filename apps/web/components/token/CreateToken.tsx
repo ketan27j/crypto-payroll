@@ -11,17 +11,27 @@ import { createToken } from "../../app/lib/actions/token/tokenOps";
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import { saveToken, saveTokenMetadata, uploadImageToServer } from "../../app/lib/actions/token/token";
 import { set } from "date-fns";
+import { PublicKey } from "@solana/web3.js";
+
+interface FormData {
+    name: string;
+    symbol: string;
+    initSupply: string;
+    wallet?: string;
+    image?: File;
+}
 
 const addClientSchema = z.object({
     name: z.string().min(1, "Token name is required"),
-    symbol: z.string().min(1, "Token symbol is required"),
-    image: z.instanceof(File).refine((file) => file.size <= 1*1024 * 1024, {
+    symbol: z.string().min(1, "Token symbol is required").max(3, "Token symbol must be at most 3 characters"),    
+    image: z.instanceof(File,{ message: "Please upload a valid image file" })
+        .refine((file) => file.size <= 1*1024 * 1024, {
         message: "Image size should be less than 1MB",
-    }).refine((file) => ['image/jpeg', 'image/png'].includes(file.type), {
+    }).refine((file) => ['image/jpeg','image/jpg','image/png'].includes(file.type), {
         message: "Only JPEG and PNG files are allowed",
     }),
-    initSupply: z.number().min(1, "Initial supply is required"),
-    wallet: z.string().min(1, "Wallet is required"),
+    initSupply: z.coerce.number({ invalid_type_error: "Initial supply must be a number",required_error:"Initial supply is required" }).gte(1, "Initial supply is required").lte(999999999999, "Initial supply must be at most 12 digits"),
+    wallet: z.string().min(1, "Please connect a wallet"),
   });
   
 export const CreateToken = () => {
@@ -35,13 +45,20 @@ export const CreateToken = () => {
     const [initSupply, setInitSupply] = useState<string>("");
     const [tokenState, setTokenState] = useRecoilState(tokenAddState);
     const validateForm = () => {
-        const result = addClientSchema.safeParse({
-          name,
-          symbol,
-          imageFile,
-          initSupply,
-          wallet
-        });
+        const walletPublicKey = wallet.publicKey?.toBase58();
+        const formData :FormData = {
+            name,
+            symbol,
+            initSupply
+        };
+        if(walletPublicKey) {
+            formData.wallet = walletPublicKey;
+        }
+        if (imageFile) {
+            formData.image = imageFile;
+        }
+        console.log(formData);
+        const result = addClientSchema.safeParse(formData);
         if (!result.success) {
           const errors = result.error.issues.map(issue => issue.message);
           toast.error(errors.join("\n"));
@@ -124,7 +141,7 @@ export const CreateToken = () => {
             <TextInput label="Initial Supply" placeholder="Initial Supply" value={initSupply || ""} onChange={(value) => {setInitSupply(value)}} />
             <div className="flex justify-center pt-4">               
                 <Button onClick={async () => {
-                    //if (!validateForm()) return;
+                    if (!validateForm()) return;
                     const metadataUri = await saveTokenMetadata(name, symbol, description, image || "");
                     console.log(metadataUri);
                     const token = await createToken(connection, wallet, name, symbol,description, metadataUri, initSupply);
