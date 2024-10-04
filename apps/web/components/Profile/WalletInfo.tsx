@@ -129,7 +129,7 @@ export const WalletInfo = () => {
                     <TextInput
                         label="Wallet Address"
                         value={walletAddress || ''}
-                        readOnly={false} 
+                        readonly={false} 
                         placeholder={''} 
                         onChange={function (value: string): void {
                             setWalletAddress(value);

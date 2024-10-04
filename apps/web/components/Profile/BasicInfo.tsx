@@ -18,22 +18,22 @@ export const BasicInfo: React.FC = () => {
                     onChange={() => { } }
                     placeholder="Name"
                     type="text" 
-                    readOnly={true}                />
+                    readonly={true}                />
                 <TextInput
                     label="Email Address"
                     value={session?.user?.email || ''}
                     onChange={() => {}}
                     placeholder="Email Address"
                     type="email" 
-                    readOnly={true}
+                    readonly={true}
                 />
                 <TextInput
                     label="Address"
-                    value={session?.user?.address || ''}
+                    value={''}
                     onChange={() => {}}
                     placeholder="Address"
                     type="text" 
-                    readOnly={true}
+                    readonly={true}
                 />
             </div>
         </Card>
