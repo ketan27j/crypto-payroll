@@ -25,17 +25,17 @@ export default function ProfileTabs() {
   return (
     <div className="w-full px-2 py-16 sm:px-4 md:px-6 lg:px-8">
       <TabGroup>
-        <TabList className="flex space-x-1 rounded-xl bg-blue-900/20 p-1">
+        <TabList className="flex space-x-1 rounded-xl bg-[#91629b] p-1">
           {['Settings', 'Basic Info', 'Wallet Info'].map((category) => (
             <Tab
               key={category}
               className={({ selected }) =>
                 classNames(
-                  'w-full rounded-lg py-2.5 text-sm font-medium leading-5 text-blue-700',
-                  'ring-white ring-opacity-60 ring-offset-2 ring-offset-blue-400 focus:outline-none focus:ring-2',
+                  'w-full rounded-lg py-2.5 text-lg font-medium ',
+                  'ring-white ring-opacity-60 ring-offset-2 ring-offset-purple-400 focus:outline-none focus:ring-2',
                   selected
-                    ? 'bg-white shadow'
-                    : 'text-blue-100 hover:bg-white/[0.12] hover:text-white'
+                    ? 'bg-[#541263] text-white shadow text-lg'
+                    : 'text-white hover:bg-purple-700/[0.12] hover:text-purple-100'
                 )
               }
             >
@@ -44,13 +44,13 @@ export default function ProfileTabs() {
           ))}
         </TabList>
         <TabPanels className="mt-2">
-          <TabPanel className="rounded-xl bg-white p-3 ring-white ring-opacity-60 ring-offset-2 ring-offset-blue-400 focus:outline-none focus:ring-2">
+          <TabPanel className="rounded-xl bg-white p-3 ring-white ring-opacity-60 ring-offset-2 ring-offset-purple-400 focus:outline-none focus:ring-2">
             <Settings />
           </TabPanel>
-          <TabPanel className="rounded-xl bg-white p-3 ring-white ring-opacity-60 ring-offset-2 ring-offset-blue-400 focus:outline-none focus:ring-2">
+          <TabPanel className="rounded-xl bg-white p-3 ring-white ring-opacity-60 ring-offset-2 ring-offset-purple-400 focus:outline-none focus:ring-2">
             <BasicInfo />
           </TabPanel>
-          <TabPanel className="rounded-xl bg-white p-3 ring-white ring-opacity-60 ring-offset-2 ring-offset-blue-400 focus:outline-none focus:ring-2">
+          <TabPanel className="rounded-xl bg-white p-3 ring-white ring-opacity-60 ring-offset-2 ring-offset-purple-400 focus:outline-none focus:ring-2">
             <WalletInfo />
           </TabPanel>
         </TabPanels>

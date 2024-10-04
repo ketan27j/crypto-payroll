@@ -73,7 +73,7 @@ export const WalletConnector = () => {
             </div>
             <div className="flex pt-4">               
                 <button 
-                    className="w-1/3 px-4 py-2 bg-purple-600 text-white font-semibold rounded-lg shadow-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-75 transition-colors duration-200"
+                    className="w-1/3 px-4 py-2 bg-[#91629b] text-white font-semibold rounded-lg shadow-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-75 transition-colors duration-200"
                     disabled={isLoading} 
                     onClick={getWalletBalance}
                     >
@@ -83,7 +83,7 @@ export const WalletConnector = () => {
             </div>            
             <div className="flex pt-4">               
                 <button 
-                className="w-1/3 px-4 py-2 bg-purple-600 text-white font-semibold rounded-lg shadow-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-75 transition-colors duration-200"
+                className="w-1/3 px-4 py-2 bg-[#91629b] text-white font-semibold rounded-lg shadow-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-75 transition-colors duration-200"
                 disabled={isLoading} onClick={getTotalSalaryToPay}>Get Summary</button>
                 {/* {totalToPay && <span className="flex text-md font-semibold text-gray-700flex-auto p-2 w-2/5 items-center">{totalToPay.toString()} SOL</span>} */}
             </div>
@@ -113,7 +113,7 @@ export const WalletConnector = () => {
           </div>
               <div className="flex justify-end pt-4 mt-10">               
                   <button 
-                    className="w-full px-4 py-2 bg-purple-800 text-white font-semibold rounded-lg shadow-md hover:bg-purple-900 focus:outline-none focus:ring-2 focus:ring-purple-700 focus:ring-opacity-75 transition-colors duration-200"
+                    className="w-full px-4 py-2 bg-[#91629b] text-white font-semibold rounded-lg shadow-md hover:bg-purple-900 focus:outline-none focus:ring-2 focus:ring-purple-700 focus:ring-opacity-75 transition-colors duration-200"
                     disabled={isLoading} 
                     onClick={handlePaySalary}
                   >

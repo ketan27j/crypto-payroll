@@ -128,7 +128,7 @@ export const EventCalendar: React.FC = () => {
     );
   };
   return (
-    <div className="container mx-auto p-4">
+    <div className="container mx-auto p-1">
       <Calendar
         onChange={(date) => openModal(date as Date)}
         tileDisabled={({ date }) => date < new Date(new Date().setHours(0, 0, 0, 0))}
@@ -140,9 +140,11 @@ export const EventCalendar: React.FC = () => {
             </div>
           ) : null;
         }}
-        className="w-full max-w-lg mx-auto text-lg shadow-lg rounded-lg"
+        className="w-full max-w-lg mx-auto text-2xl shadow-lg rounded-lg p-5"
       />
-      <AnimatePresence>
+      <div className="text-center mt-4 text-gray-600">
+        Click on a date to schedule an event for that day.
+      </div>      <AnimatePresence>
         {isModalOpen && (
           <motion.div
             initial={{ opacity: 0 }}
