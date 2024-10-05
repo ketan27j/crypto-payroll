@@ -16,30 +16,44 @@ export default async function Layout({
   if(session?.user){
     return (
       <div className="flex">
-          <div className="w-72 border-r border-slate-300 min-h-screen mr-4 pt-28">
-              <div>
-                  <SidebarItem href={"/dashboard"} icon={<HomeIcon />} title="Dashboard" />
-                  <SidebarItem href={"/profile"} icon={<AccountIcon />} title="Profile" />
+          <div className="w-72 bg-[#300a24] min-h-screen mr-4 pt-8 shadow-lg">
+              <div className="px-4 space-y-3">
+                <div>
+                  <div className="px-4 space-y-3 mb-10">
+                    <div className="flex items-center space-x-3 mb-4">
+                      <div className="w-10 h-10 rounded-full bg-purple-500 flex items-center justify-center text-white text-xl font-bold">
+                        {session.user.name ? session.user.name[0].toUpperCase() : 'U'}
+                      </div>
+                      <span className="text-white font-bold">{session.user.name}</span>
+                    </div>
+                    {/* Rest of the sidebar items */}
+                  </div>
+                  <hr className="border-gray-500 my-4" />
+                </div>
+                  <SidebarItem href={"/dashboard"} icon={<HomeIcon />} title="Dashboard" className="text-white text-lg font-medium hover:bg-purple-700 hover:text-purple-100 rounded-lg transition-all duration-200" />
+                  <SidebarItem href={"/profile"} icon={<AccountIcon />} title="Profile" className="text-white text-lg font-medium hover:bg-purple-700 hover:text-purple-100 rounded-lg transition-all duration-200" />
                   { CanActivate(['Admin','ClientAdmin']) &&
-                    <SidebarItem href={"/employee"} icon={<EmployeeIcon />} title="Employee Information" />
+                    <SidebarItem href={"/employee"} icon={<EmployeeIcon />} title="Employee Information" className="text-white text-lg font-medium hover:bg-purple-700 hover:text-purple-100 rounded-lg transition-all duration-200" />
                   }
                   { CanActivate(['Admin']) &&
-                    <SidebarItem href={"/client"} icon={<ClientIcon />} title="Client Information" /> 
+                    <SidebarItem href={"/client"} icon={<ClientIcon />} title="Client Information" className="text-white text-lg font-medium hover:bg-purple-700 hover:text-purple-100 rounded-lg transition-all duration-200" /> 
                   }
                   { CanActivate(['Admin','ClientAdmin']) &&
-                    <SidebarItem href={"/fundtransfer"} icon={<TransactionsIcon />} title="Fund Transfer" />
+                    <SidebarItem href={"/fundtransfer"} icon={<TransactionsIcon />} title="Fund Transfer" className="text-white text-lg font-medium hover:bg-purple-700 hover:text-purple-100 rounded-lg transition-all duration-200" />
                   }
                   { CanActivate(['Admin','ClientAdmin']) &&
-                    <SidebarItem href={"/scheduling"} icon={<SchedulingIcon />} title="Scheduling" />
+                    <SidebarItem href={"/scheduling"} icon={<SchedulingIcon />} title="Scheduling" className="text-white text-lg font-medium hover:bg-purple-700 hover:text-purple-100 rounded-lg transition-all duration-200" />
                   }
                   { CanActivate(['Admin','ClientAdmin']) &&
-                    <SidebarItem href={"/tokenlaunchpad"} icon={<TokenLaunchpadIcon />} title="Token Launchpad" />
+                    <SidebarItem href={"/salaryPayment"} icon={<TransactionsIcon />} title="Salary Payment" className="text-white text-lg font-medium hover:bg-purple-700 hover:text-purple-100 rounded-lg transition-all duration-200" />
+                  }
+                  { CanActivate(['Admin','ClientAdmin']) &&
+                    <SidebarItem href={"/tokenlaunchpad"} icon={<TokenLaunchpadIcon />} title="Token Launchpad" className="text-white text-lg font-medium hover:bg-purple-700 hover:text-purple-100 rounded-lg transition-all duration-200" />
                   }
               </div>
           </div>
               {children}
-      </div>
-    );
+      </div>    );
   }else {
     return (
       <div className="flex min-h-screen w-full items-center justify-center gap-4 p-4">

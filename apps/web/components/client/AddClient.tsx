@@ -3,9 +3,9 @@ import { Button } from "@repo/ui/button";
 import { Card } from "@repo/ui/card";
 import { useState } from "react";
 import { TextInput } from "@repo/ui/textInput";
-import { addClient } from "../app/lib/actions/client";
+import { addClient } from "../../app/lib/actions/client";
 import { toast } from "react-hot-toast"
-import { clientAddState } from "../app/store/clientAddState";
+import { clientAddState } from "../../app/store/clientAddState";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import { z } from "zod";
 

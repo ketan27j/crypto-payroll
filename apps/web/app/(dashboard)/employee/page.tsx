@@ -20,9 +20,8 @@ export default function EmployeePage() {
         {isModalOpen && (
           <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full">
             <div className="relative top-20 mx-auto p-5 border w-3/4 max-w-4xl shadow-lg rounded-md bg-white">
-              <div className="flex justify-between items-center">
-                <h3 className="text-lg font-medium">Add New Employee</h3>
-                <button onClick={closeModal} className="text-black close-modal">×</button>
+              <div className="flex justify-end items-center">
+                <button onClick={closeModal} className="text-black close-modal">Close</button>
               </div>
               <div className="mt-2">
                 <AddEmployee onClose={closeModal} />
