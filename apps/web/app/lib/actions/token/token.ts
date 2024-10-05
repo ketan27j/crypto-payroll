@@ -51,7 +51,7 @@ export async function saveTokenMetadata(name: string, symbol: string, descriptio
     return path.join(process.env.NEXTAUTH_URL || '','api', 'token-metadata', symbol+'-metadata.json')
 }
 
-export async function saveToken(wallet:string, name: string, symbol: string, description: string, image: string, initSupply: string, tokenPubKey:string): Promise<boolean> {
+export async function saveToken(wallet:string, name: string, symbol: string, description: string, image: string, initSupply: number, tokenPubKey:string): Promise<boolean> {
     const session = await getServerSession(authOptions);
     const userId = Number(session?.user?.id);
     try {
@@ -62,7 +62,7 @@ export async function saveToken(wallet:string, name: string, symbol: string, des
                 symbol: symbol,
                 description: description,
                 image: image,
-                initSupply: parseInt(initSupply),
+                initSupply: initSupply,
                 mintAuthority: wallet,
                 createdBy: userId
             }
