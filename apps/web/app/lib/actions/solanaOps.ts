@@ -2,9 +2,7 @@
 import { WalletContextState } from "@solana/wallet-adapter-react";
 import { Connection, Keypair, LAMPORTS_PER_SOL, PublicKey, SystemProgram, Transaction } from "@solana/web3.js";
 import bs58 from 'bs58';
-import { getEmployeesForClient, SalaryInfo, SaveSalaryTransaction } from "./solana/salaryTransaction";
-import QRCode from 'qrcode';
-import { ClientInfo } from "./client";
+import { SalaryInfo, SaveSalaryTransaction } from "./solana/salaryTransaction";
 
 export async function getBalance(connection:Connection, walletAddress: string) {
     const address = new PublicKey(walletAddress);
@@ -56,7 +54,12 @@ export async function paySalary(clientId: number, connection: Connection,
             recentBlockhash: blockhash,
             feePayer: wallet.publicKey,
         });
+        
         salaryDetails?.forEach(async (salaryTransaction) => {
+            if (!wallet.publicKey) {
+                throw new Error("Wallet not connected");
+            }
+        
             transaction.add(
                 SystemProgram.transfer({
                     fromPubkey: wallet.publicKey,
@@ -105,8 +108,6 @@ export async function paySalary(clientId: number, connection: Connection,
     // });
 
     //return qrcode;
-    let u1 = `solana:${salaryTransactions[0].toPubkey}?amount=${salaryTransactions[0].amount * LAMPORTS_PER_SOL}&label=Payment Test For CryptoZone&message=Sending from CZ&`;
-    return u1;
     // const signature = await connection.sendRawTransaction(signed.serialize());
     // await connection.confirmTransaction(signature);
     // return signature;

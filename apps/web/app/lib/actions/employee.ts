@@ -156,6 +156,7 @@ export async function getAllEmployees(): Promise<EmployeeInfo[]> {
       state: '',
       country: '',
       taxJurisdiction: '',
+      userId: employee.userId
     }));
 
     return transformedEmployees;
@@ -298,6 +299,7 @@ export async function getEmployeeByUserId(email: string): Promise<EmployeeInfo |
       state: null,
       country: null,
       taxJurisdiction: null,
+      userId: employee.userId
     };
 
     return employeeInfo;

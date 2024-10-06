@@ -56,6 +56,7 @@ export const AddEmployee: React.FC<{ onClose?: () => void }> = ({ onClose }) => 
         wallet: '',
         isActive: false,
         clientId: 0,
+        userId: 0
     };
     const [employeeData, setEmployeeData] = useState(defaultEmp);
     const [employeeState, setEmployeeState] = useRecoilState(employeeAddState);
