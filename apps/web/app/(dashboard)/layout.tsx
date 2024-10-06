@@ -56,7 +56,7 @@ export default function Layout({
                 <div className="px-4 space-y-3">
                   <div className="flex items-center space-x-3 mb-4">
                     <div className="w-10 h-10 rounded-full bg-purple-500 flex items-center justify-center text-white text-xl font-bold">
-                      {currentUserState ? currentUserState.name[0].toUpperCase() : 'U'}
+                      {currentUserState ? currentUserState.name.charAt(0).toUpperCase() : 'U'}
                     </div>
                     <span className="text-white font-bold">{currentUserState.name}</span>
                   </div>
