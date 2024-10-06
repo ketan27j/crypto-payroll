@@ -75,7 +75,7 @@ export const FundTranser = () => {
 
       const TransferForm = () => {
         
-        return <Card title="Fund Transfer">
+        return <Card title="Quick Send">
             <div>
                 <div style={{
                     display: 'flex',
@@ -122,7 +122,7 @@ export const FundTranser = () => {
                         Validate&nbsp;Wallet
                     </button>
                 <span className={`flex text-sm font-semibold flex-auto p-2 w-1/5 items-center ${receiverWalletIsValid ? 'text-green-600' : 'text-red-600'}`}>
-                        {receiverWalletIsValid ? "VALID" : "INVALID"}
+                        {receiverWalletIsValid ? "VALID" : ""}
                     </span>
                 </div>
                 <Select label="Currency" options={currencies} onSelect={(value) => setCurrency(value)}></Select>
