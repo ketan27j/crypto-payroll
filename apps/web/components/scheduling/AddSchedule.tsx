@@ -143,7 +143,7 @@ export const EventCalendar: React.FC = () => {
         className="w-full max-w-lg mx-auto text-2xl shadow-lg rounded-lg p-5"
       />
       <div className="text-center mt-4 text-gray-600">
-        Click on a date to schedule an event for that day.
+        Click on a date to schedule an event.
       </div>      <AnimatePresence>
         {isModalOpen && (
           <motion.div

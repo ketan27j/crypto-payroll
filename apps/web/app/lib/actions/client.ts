@@ -7,6 +7,7 @@ import { EmployeeInfo } from "./employee";
 
 export interface ClientInfo {
     id: number,
+    userId: number,
     email: string | null,
     name: string | null,
     wallet: string | null,
@@ -38,6 +39,7 @@ export async function getClientDetails(clientInfoPredicate: any ): Promise<Clien
         console.log('clients', clients.length);
         const transformedClients: ClientInfo[] = clients.map(client => ({
             id: client.id,
+            userId: client.user.id,
             email: client.user.email,
             name: client.user.name,
             wallet: client.wallet,
@@ -45,6 +47,7 @@ export async function getClientDetails(clientInfoPredicate: any ): Promise<Clien
             kycok: client.kycok,
             employees: client.Employee.map(employee => ({
                 id: employee.id,
+                userId: employee.user.id,
                 name: employee.user.name,
                 email: employee.user.email,
                 designation: employee.designation,

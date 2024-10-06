@@ -12,6 +12,11 @@ import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import { saveToken, saveTokenMetadata, uploadImageToServer } from "../../app/lib/actions/token/token";
 import { set } from "date-fns";
 import { PublicKey } from "@solana/web3.js";
+import {
+    WalletModalProvider,
+    WalletDisconnectButton,
+    WalletMultiButton
+} from '@solana/wallet-adapter-react-ui';
 
 interface FormData {
     name: string;
@@ -92,6 +97,18 @@ export const CreateToken = () => {
       };
     return <Card title="Create Token">
         <div>
+
+            <div style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                }}>
+                <WalletMultiButton style={{
+                    borderRadius: '5px',
+                    backgroundColor: '#91629b',
+                    color: '#fff',
+                    }}>
+                </WalletMultiButton>
+            </div>
             <TextInput label="Name" placeholder="Name" value={name} onChange={(value) => {setName(value)}} />
             <TextInput label="Description" placeholder="Description" value={description} onChange={(value) => {setDescription(value)}} />
             <TextInput label="Symbol" placeholder="Symbol" value={symbol || ""} onChange={(value) => {setSymbol(value)}} />
@@ -133,14 +150,16 @@ export const CreateToken = () => {
                                     toast.error("No image file selected");
                                 }
                         }}
-                        className="text-white bg-gray-800 px-4 py-2 rounded-md flex-auto p-2 w-1/5">
+                        className="text-white btn-secondary px-4 py-2 rounded-md flex-auto p-2 w-1/5">
                         Upload&nbsp;Image
                     </button>
                 </div>
             </div>
             <TextInput label="Initial Supply" placeholder="Initial Supply" value={initSupply || ""} onChange={(value) => {setInitSupply(value)}} />
             <div className="flex justify-center pt-4">               
-                <Button onClick={async () => {
+                <button 
+                    className="text-white btn-primary px-4 py-2 rounded-md flex-auto p-2 w-1/5"
+                    onClick={async () => {
                     if (!validateForm()) return;
                     const metadataUri = await saveTokenMetadata(name, symbol, description, image || "");
                     console.log(metadataUri);
@@ -157,7 +176,7 @@ export const CreateToken = () => {
                     } else {
                         toast.error("Something went wrong");
                     }
-                }}>Create Token</Button>
+                }}>Create Token</button>
             </div> 
         </div>
     </Card>

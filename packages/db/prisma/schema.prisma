@@ -58,17 +58,18 @@ model Employee {
 }
 
 model Transaction {
-  id             Int       @id @default(autoincrement())
+  id             Int      @id @default(autoincrement())
+  senderUserId   Int
+  receiverUserId Int
   senderWallet   String?
   receiverWallet String?
-  amount         Int
-  currency       String    @default("SOL")
+  amount         Decimal @db.Decimal(15, 6)
+  currency       String   @default("SOL")
   signature      String
-  createdAt      DateTime  @default(now())
-  paidOn         DateTime?
-  userId         Int
-  user           User      @relation(fields: [userId], references: [id])
-  isActive       Boolean?  @default(true)
+  createdAt      DateTime @default(now())
+  createdBy      Int
+  User           User?    @relation(fields: [userId], references: [id])
+  userId         Int?
 }
 
 model PaymentSchedule {
@@ -83,14 +84,14 @@ model PaymentSchedule {
 }
 
 model Event {
-  id        Int      @id @default(autoincrement())
-  type      String
-  title     String
+  id          Int      @id @default(autoincrement())
+  type        String
+  title       String
   description String?
-  date      DateTime
-  time      String
-  createdAt DateTime @default(now())
-  createdBy Int
+  date        DateTime
+  time        String
+  createdAt   DateTime @default(now())
+  createdBy   Int
 }
 
 model Token {

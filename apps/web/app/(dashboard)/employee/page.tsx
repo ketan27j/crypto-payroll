@@ -10,10 +10,10 @@ export default function EmployeePage() {
     const closeModal = () => setIsModalOpen(false);
 
     return (
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-4 py-8 w-full">
         <button 
           onClick={openModal}
-          className="bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded mb-4"
+          className="btn-secondary hover:bg-purple-700 text-white font-bold py-2 px-4 rounded mb-4"
         >
           Add New Employee
         </button>

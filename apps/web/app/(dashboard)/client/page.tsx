@@ -10,13 +10,10 @@ export default function ClientPage() {
     const closeModal = () => setIsModalOpen(false);
 
     return (
-        <div className="w-full">
-            <div className="text-3xl text-black pt-8 mb-8 font-bold">
-                Client Information
-            </div>
+        <div className="container mx-auto px-4 py-8 w-full">
             <button 
                 onClick={openModal}
-                className="bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded mb-4"
+                className="btn-secondary hover:bg-purple-700 text-white font-bold py-2 px-4 rounded mb-4"
             >
                 Add New Client
             </button>
@@ -25,7 +22,7 @@ export default function ClientPage() {
                     <div className="relative top-20 mx-auto p-5 border w-3/4 max-w-4xl shadow-lg rounded-md bg-white">
                         <div className="flex justify-between items-center">
                             <h3 className="text-lg font-medium">Add New Client</h3>
-                            <button onClick={closeModal} className="text-black close-modal">×</button>
+                            <button onClick={closeModal} className="text-black close-modal">Close</button>
                         </div>
                         <div className="mt-2">
                             <AddClient onClose={closeModal} />
@@ -33,11 +30,9 @@ export default function ClientPage() {
                     </div>
                 </div>
             )}
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-1 p-4">
-                <div className="w-full">
+                <div className="mt-8">
                     <ClientDetails />
                 </div>
-            </div>
         </div>
     );
 }
