@@ -14,7 +14,11 @@ import {
     WalletMultiButton
 } from '@solana/wallet-adapter-react-ui';
 import '@solana/wallet-adapter-react-ui/styles.css';
-import { getSalaryDetailsForClient, SalaryInfo } from '../../app/lib/actions/solana/salaryTransaction';
+import { getSalaryDetailsForClient, SalaryInfo, SaveSalaryTransaction } from '../../app/lib/actions/solana/salaryTransaction';
+import { useRecoilState, useSetRecoilState } from "recoil";
+import { CurrentUserState } from "../../app/store/clientAddState";
+import { ClientInfo } from '../../app/lib/actions/client';
+import { LAMPORTS_PER_SOL } from '@solana/web3.js';
 
 export const WalletConnector = () => {
     const { connection } = useConnection();
@@ -28,6 +32,7 @@ export const WalletConnector = () => {
     const wallet = useWallet();
     const [totalToPay, setTotalToPay] = useState<string>('');
     const [salaryDetails, setSalaryDetails] = useState<SalaryInfo[]>([]);
+    const [currentUserState, setCurrentUserState] = useRecoilState(CurrentUserState);
     
     useEffect(() => {
         const senderPublicKey = wallet.publicKey ? wallet.publicKey.toString() : "";
@@ -39,7 +44,23 @@ export const WalletConnector = () => {
     const handlePaySalary = async () => {
         // let transaction = await generateSolanaTransactionForSalaryPayment(connection, wallet);
         // console.log('transaction', transaction);
-        await paySalary(connection, wallet, salaryDetails)
+        if(currentUserState?.id && currentUserState?.clientInfo?.id) {
+            let signature = await paySalary(currentUserState?.clientInfo?.id, 
+                    connection, 
+                    wallet, salaryDetails,
+                    currentUserState?.id
+                )
+            if(!signature) {
+                toast.error('Error while executing send transaction');
+                return;
+            }
+            else {
+                toast.success('Paid successfully');
+            }
+        }
+        else {
+            toast.error('Invalid employer login to pay salary');
+        }
     }
 
     const getWalletBalance = async () => {
@@ -48,17 +69,35 @@ export const WalletConnector = () => {
     }
 
     const getTotalSalaryToPay = async () => {
-        let totalSalaryToPay = 0;
-        const salaryDetails = await getSalaryDetailsForClient(2);
-        setSalaryDetails(salaryDetails);
-        salaryDetails.forEach((salaryInfo: any) => {
-            totalSalaryToPay += salaryInfo.amount;
-        });
-        setTotalToPay(totalSalaryToPay?.toString());
+        console.log('currentUserState', currentUserState);
+        if(currentUserState && currentUserState?.clientInfo?.id) {
+            let totalSalaryToPay = 0;
+            const salaryDetails = await getSalaryDetailsForClient(currentUserState?.clientInfo?.id);
+            setSalaryDetails(salaryDetails);
+            salaryDetails.forEach((salaryInfo: any) => {
+                totalSalaryToPay += salaryInfo.amount;
+            });
+            setTotalToPay(totalSalaryToPay?.toString());
+        }
+        else {
+            toast.error('Invalid employer login to pay salary');
+        }
     }
 
     return <Card title="Salary Payment">
         <div>
+            <div style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                }}>
+                <WalletMultiButton style={{
+                    borderRadius: '5px',
+                    backgroundColor: '#91629b',
+                    color: '#fff',
+                    }}>
+                </WalletMultiButton>
+                {/* <WalletDisconnectButton /> */}
+            </div>
             {senderWallet && <label className="block mb-2 text-lg font-medium text-gray-900 pt-2">Sender Wallet Address</label>}
             {!senderWallet && <label className="block mb-2 text-lg font-medium text-gray-900 pt-2">Connect Your Wallet to Pay Salary</label>}            
             <div className="flex gap-4">
@@ -77,7 +116,7 @@ export const WalletConnector = () => {
                     disabled={isLoading} 
                     onClick={getWalletBalance}
                     >
-                    Get Wallet Balance
+                    Check Balance
                 </button>
                 {senderBalance && <span className="flex text-md font-semibold text-gray-700flex-auto p-2 w-1/5 items-center">{senderBalance.toString()} SOL</span>}
             </div>            
@@ -103,7 +142,7 @@ export const WalletConnector = () => {
                   <div className="bg-white p-4 rounded-lg shadow-md transition-all duration-300 hover:shadow-xl">
                       <p className="text-sm font-medium text-gray-500 mb-1">Total Amount to Pay</p>
                       <p className="text-3xl font-extrabold text-purple-700">{Number(totalToPay).toFixed(2)} <span className="text-lg">SOL</span></p>
-                      <p className="text-md font-extrabold text-purple-700">{Number(totalToPay).toFixed(5)} <span className="text-lg">Lamports</span></p>
+                      <p className="text-md font-extrabold text-purple-700">{(Number(totalToPay)* LAMPORTS_PER_SOL).toFixed(5)} <span className="text-lg">Lamports</span></p>
                   </div>
                   <div className="bg-white p-4 rounded-lg shadow-md transition-all duration-300 hover:shadow-xl">
                       <p className="text-sm font-medium text-gray-500 mb-1">Active Employees</p>
@@ -113,11 +152,11 @@ export const WalletConnector = () => {
           </div>
               <div className="flex justify-end pt-4 mt-10">               
                   <button 
-                    className="w-full px-4 py-2 bg-[#91629b] text-white font-semibold rounded-lg shadow-md hover:bg-purple-900 focus:outline-none focus:ring-2 focus:ring-purple-700 focus:ring-opacity-75 transition-colors duration-200"
+                    className="w-full px-4 py-2 btn-primary text-white font-semibold rounded-lg shadow-md hover:bg-purple-900 focus:outline-none focus:ring-2 focus:ring-purple-700 focus:ring-opacity-75 transition-colors duration-200"
                     disabled={isLoading} 
                     onClick={handlePaySalary}
                   >
-                    Pay Salary
+                    MAKE PAYMENT
                   </button>
             </div> 
 
@@ -131,18 +170,11 @@ export const WalletConnector = () => {
 export default function() {
     return <div className="w-full">
         <div className="grid p-4">
-            <div className="w-full md:w-2/3 mx-auto">
+            <div className="w-full">
                 <ConnectionProvider endpoint={process.env.SOLANA_ENDPOINT || "https://api.devnet.solana.com"}>
                     <WalletProvider wallets={[]} autoConnect>
                         <WalletModalProvider>
-                            <div style={{
-                                display: 'flex',
-                                justifyContent: 'space-between',
-                                padding: 20 }}>
-                                <WalletMultiButton />
-                                <WalletDisconnectButton />
-                            </div>
-                            <WalletConnector></WalletConnector>
+                        <WalletConnector></WalletConnector>
                         </WalletModalProvider>
                     </WalletProvider>
                 </ConnectionProvider>

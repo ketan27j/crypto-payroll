@@ -15,13 +15,13 @@ export default function() {
             <ConnectionProvider endpoint={process.env.SOLANA_ENDPOINT || "https://api.devnet.solana.com"}>
                 <WalletProvider wallets={[]} autoConnect>
                     <WalletModalProvider>
-                        <div style={{
+                        {/* <div style={{
                             display: 'flex',
                             justifyContent: 'space-between',
                             padding: 20 }}>
                             <WalletMultiButton />
                             <WalletDisconnectButton />
-                        </div>
+                        </div> */}
                         <CreateToken></CreateToken>
                     </WalletModalProvider>
                 </WalletProvider>

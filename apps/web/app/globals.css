@@ -41,3 +41,10 @@ a {
     color-scheme: dark;
   }
 }
+
+.btn-primary {
+  background-color: #300a24;
+}
+.btn-secondary {
+  background-color: #91629b;
+}

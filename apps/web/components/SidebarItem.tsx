@@ -17,10 +17,22 @@ export const SidebarItem = ({ href, title, icon, className }: { href: string; ti
         <div className="pr-5">
             {icon}
         </div>
-        <div className={`font-bold ${selected ? "text-lg text-purple-300" : 
-            "text-white text-sm font-medium hover:bg-purple-700 hover:text-purple-100 rounded-lg transition-all duration-200"
+        <div className={`font-bold
+            text-white text-sm font-medium hover:bg-purple-700 hover:text-purple-100 rounded-lg transition-all duration-200"
             }`}>
             {title}
         </div>
+
+        {selected && 
+        <div className="ml-4">
+            {ChevronIcon()}
+        </div>}
     </div>
 }
+function ChevronIcon() {
+    return <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                <path stroke-linecap="round" stroke-linejoin="round" d="m5.25 4.5 7.5 7.5-7.5 7.5m6-15 7.5 7.5-7.5 7.5" />
+            </svg>
+  
+  }
+  

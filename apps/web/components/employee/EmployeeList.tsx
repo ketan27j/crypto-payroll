@@ -73,9 +73,7 @@ export const EmployeeList = () => {
     
       return (
         <Card title="Employees">
-            <div>
               <Table data={employeeList} columns={columns} />
-            </div>
         </Card>
 
       )

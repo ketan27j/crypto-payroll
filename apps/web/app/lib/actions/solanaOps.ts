@@ -2,8 +2,9 @@
 import { WalletContextState } from "@solana/wallet-adapter-react";
 import { Connection, Keypair, LAMPORTS_PER_SOL, PublicKey, SystemProgram, Transaction } from "@solana/web3.js";
 import bs58 from 'bs58';
-import { getEmployeesForClient, SalaryInfo } from "./solana/salaryTransaction";
+import { getEmployeesForClient, SalaryInfo, SaveSalaryTransaction } from "./solana/salaryTransaction";
 import QRCode from 'qrcode';
+import { ClientInfo } from "./client";
 
 export async function getBalance(connection:Connection, walletAddress: string) {
     const address = new PublicKey(walletAddress);
@@ -40,37 +41,53 @@ export async function transferSol(connection: Connection, wallet: WalletContextS
     return signature;
 }
 
-export async function paySalary(connection: Connection, 
-    wallet: WalletContextState, salaryDetails: SalaryInfo[] ) {
+export async function paySalary(clientId: number, connection: Connection, 
+    wallet: WalletContextState, salaryDetails: SalaryInfo[],
+    currentUserId: number ) {
     if (!wallet.publicKey) {
         throw new Error("Wallet not connected");
     }
+    console.log('wallet', wallet.publicKey.toString());
+    console.log('salaryDetails', salaryDetails);
+    try {
+        // const salaryTransactions = await getEmployeesForClient(1);
+        const { blockhash } = await connection.getLatestBlockhash();
+        const transaction = new Transaction({
+            recentBlockhash: blockhash,
+            feePayer: wallet.publicKey,
+        });
+        salaryDetails?.forEach(async (salaryTransaction) => {
+            transaction.add(
+                SystemProgram.transfer({
+                    fromPubkey: wallet.publicKey,
+                    toPubkey: new PublicKey(salaryTransaction.employeeWallet),
+                    lamports: salaryTransaction.amount
+                })
+            );
+        });
 
-    // const salaryTransactions = await getEmployeesForClient(1);
-    const { blockhash } = await connection.getLatestBlockhash();
-    const transaction = new Transaction({
-        recentBlockhash: blockhash,
-        feePayer: wallet.publicKey,
-      });
-    salaryDetails?.forEach(async (salaryTransaction) => {
-        transaction.add(
-            SystemProgram.transfer({
-                fromPubkey: wallet.publicKey,
-                toPubkey: new PublicKey(salaryTransaction.employeeWallet),
-                lamports: salaryTransaction.amount * LAMPORTS_PER_SOL
-            })
-        );
-    });
+        if (!wallet.signTransaction) {
+            throw new Error("Wallet does not support signing transactions");
+        }
 
-    if (!wallet.signTransaction) {
-        throw new Error("Wallet does not support signing transactions");
+
+        const signed = await wallet.signTransaction(transaction);
+        const signature = await connection.sendRawTransaction(signed.serialize());
+        await connection.confirmTransaction(signature);
+
+        let clientInfo = {
+            id: clientId,
+            wallet: wallet.publicKey?.toString() || ''
+        };
+        await SaveSalaryTransaction(clientInfo, salaryDetails, signature, currentUserId);
+
+        console.log('signature', signature);
+        return signature;
     }
-
-
-    const signed = await wallet.signTransaction(transaction);
-    const signature = await connection.sendRawTransaction(signed.serialize());
-    await connection.confirmTransaction(signature);
-    return signature;
+    catch (error) {
+        console.log('Error in executing send transaction', error);
+        return null;
+    }
 
     // const signed = await wallet.signTransaction(transaction);
     // console.log('signed', signed);
