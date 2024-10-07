@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { Tab, TabGroup, TabList, TabPanel, TabPanels } from '@headlessui/react';
 import { TextInput } from "@repo/ui/textInput";
 import { Button } from "@repo/ui/button";
-import { FundTranser } from '../FundTransfer';
+import FundTransfer from '../FundTransfer';
 import SalaryPayment from '../client/SalaryPayment';
 import { Transaction } from '@solana/web3.js';
 import { TransactionHistory } from '../client/TransactionHistory';
@@ -46,7 +46,7 @@ export default function PaymentsTab() {
         </TabList>
         <TabPanels className="mt-2">
           <TabPanel className="rounded-xl bg-white p-3 ring-white ring-opacity-60 ring-offset-2 ring-offset-purple-400 focus:outline-none focus:ring-2">
-            <FundTranser></FundTranser>
+            <FundTransfer></FundTransfer>
           </TabPanel>
           <TabPanel className="rounded-xl bg-white p-3 ring-white ring-opacity-60 ring-offset-2 ring-offset-purple-400 focus:outline-none focus:ring-2">
             <SalaryPayment></SalaryPayment>
