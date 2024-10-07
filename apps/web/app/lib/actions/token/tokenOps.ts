@@ -1,21 +1,22 @@
 "use client";
-import { Connection, Keypair, SystemProgram, Transaction } from "@solana/web3.js";
+import { Connection, Keypair, PublicKey, SystemProgram, Transaction } from "@solana/web3.js";
 import { WalletContextState } from "@solana/wallet-adapter-react";
-import { ExtensionType, LENGTH_SIZE, MINT_SIZE, TOKEN_2022_PROGRAM_ID, TYPE_SIZE, createAssociatedTokenAccountInstruction, createInitializeMetadataPointerInstruction, createInitializeMint2Instruction, createInitializeMintInstruction, createMint, createMintToInstruction, getAssociatedTokenAddressSync, getMinimumBalanceForRentExemptMint, getMintLen } from "@solana/spl-token"
-import { createInitializeInstruction, pack } from '@solana/spl-token-metadata';
+import { ExtensionType, LENGTH_SIZE, TOKEN_2022_PROGRAM_ID, TYPE_SIZE, createAssociatedTokenAccountInstruction, createInitializeMetadataPointerInstruction, createInitializeMint2Instruction, createInitializeMintInstruction, createMint, createMintToInstruction, getAssociatedTokenAddressSync, getOrCreateAssociatedTokenAccount, getMinimumBalanceForRentExemptMint, getMintLen } from "@solana/spl-token"
+import { createInitializeInstruction, pack, TokenMetadata } from '@solana/spl-token-metadata';
 
-export async function createToken(connection: Connection, wallet: WalletContextState,name: string, symbol: string, description: string, metadataUri: string, initSupply: string): Promise<string> {
+export async function createToken(connection: Connection, wallet: WalletContextState,name: string, symbol: string, description: string, metadataUri: string, initSupply: number, decimals: number): Promise<string> {
     if (!wallet.publicKey) {
         throw new Error("Wallet not connected");
     }
     
     const mintKeypair = Keypair.generate();
-    const metadata = {
+    const metadata :TokenMetadata= {
+        updateAuthority: wallet.publicKey,
         mint: mintKeypair.publicKey,
         name: name,
         symbol: symbol,
         uri: metadataUri,
-        additionalMetadata: [],
+        additionalMetadata: [["description", description]],
     };
     const mintLen = getMintLen([ExtensionType.MetadataPointer]);
     const metadataLen = TYPE_SIZE + LENGTH_SIZE + pack(metadata).length;
@@ -31,7 +32,7 @@ export async function createToken(connection: Connection, wallet: WalletContextS
             programId: TOKEN_2022_PROGRAM_ID,
         }),
         createInitializeMetadataPointerInstruction(mintKeypair.publicKey, wallet.publicKey, mintKeypair.publicKey, TOKEN_2022_PROGRAM_ID),
-        createInitializeMintInstruction(mintKeypair.publicKey, 9, wallet.publicKey, null, TOKEN_2022_PROGRAM_ID),
+        createInitializeMintInstruction(mintKeypair.publicKey, decimals, wallet.publicKey, wallet.publicKey, TOKEN_2022_PROGRAM_ID),
         createInitializeInstruction({
             programId: TOKEN_2022_PROGRAM_ID,
             mint: mintKeypair.publicKey,
@@ -53,20 +54,29 @@ export async function createToken(connection: Connection, wallet: WalletContextS
         console.error("Error sending transaction:", error);
         throw error;
     }
-    
+    return transaction.signature?.toString() || ''
+}
+
+export async function mintToken(connection: Connection, wallet: WalletContextState, mintPublicKey: PublicKey, receiverWallet:string, amount: number): Promise<string> {
+    if (!wallet.publicKey) {
+        throw new Error("Wallet not connected");
+    }
+    const receiverWalletPublicKey = new PublicKey(receiverWallet);
+
     const associatedToken = getAssociatedTokenAddressSync(
-        mintKeypair.publicKey,
-        wallet.publicKey,
+        mintPublicKey,
+        receiverWalletPublicKey,
         false,
         TOKEN_2022_PROGRAM_ID,
     );
-
+    //getOrCreateAssociatedTokenAccount(connection, wallet, associatedToken, mintPublicKey, TOKEN_2022_PROGRAM_ID);
+    console.log(`Associated Token Account: ${associatedToken.toBase58()}`);
     const transaction2 = new Transaction().add(
         createAssociatedTokenAccountInstruction(
             wallet.publicKey,
             associatedToken,
-            wallet.publicKey,
-            mintKeypair.publicKey,
+            receiverWalletPublicKey,
+            mintPublicKey,
             TOKEN_2022_PROGRAM_ID,
         ),
     );
@@ -78,9 +88,8 @@ export async function createToken(connection: Connection, wallet: WalletContextS
         console.error("Error sending transaction2:", error);
         throw error;
     }
-
     const transaction3 = new Transaction().add(
-        createMintToInstruction(mintKeypair.publicKey, associatedToken, wallet.publicKey, 1000000000, [], TOKEN_2022_PROGRAM_ID)
+        createMintToInstruction(mintPublicKey, receiverWalletPublicKey, wallet.publicKey, amount)
     );
     
     try {
@@ -91,5 +100,5 @@ export async function createToken(connection: Connection, wallet: WalletContextS
         throw error;
     }
 
-    return mintKeypair.publicKey.toBase58();
+    return mintPublicKey.toBase58();
 }

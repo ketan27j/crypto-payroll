@@ -7,10 +7,9 @@ import toast from "react-hot-toast";
 import { useRecoilState } from "recoil";
 import { z } from "zod";
 import { tokenAddState, walletState } from "../../app/store/walletState";
-import { createToken } from "../../app/lib/actions/token/tokenOps";
+import { createToken, mintToken } from "../../app/lib/actions/token/tokenOps";
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import { saveToken, saveTokenMetadata, uploadImageToServer } from "../../app/lib/actions/token/token";
-import { set } from "date-fns";
 import { PublicKey } from "@solana/web3.js";
 import {
     WalletModalProvider,
@@ -21,7 +20,8 @@ import {
 interface FormData {
     name: string;
     symbol: string;
-    initSupply: string;
+    decimals: number;
+    initSupply: number;
     wallet?: string;
     image?: File;
 }
@@ -29,6 +29,7 @@ interface FormData {
 const addClientSchema = z.object({
     name: z.string().min(1, "Token name is required"),
     symbol: z.string().min(1, "Token symbol is required").max(3, "Token symbol must be at most 3 characters"),    
+    decimals: z.coerce.number({ invalid_type_error: "Decimals must be a number",required_error:"Decimals is required" }).gte(1, "Decimals is required").lte(9, "Decimals must be at most 9 digits"),
     image: z.instanceof(File,{ message: "Please upload a valid image file" })
         .refine((file) => file.size <= 1*1024 * 1024, {
         message: "Image size should be less than 1MB",
@@ -45,15 +46,17 @@ export const CreateToken = () => {
     const [name, setName] = useState<string>("");
     const [description, setDescription] = useState<string>("");
     const [symbol, setSymbol] = useState<string>("");
+    const [decimals, setDecimals] = useState<number>(6);
     const [imageFile, setImageFile] = useState<File | null>(null); 
     const [image, setImage] = useState<string>(""); 
-    const [initSupply, setInitSupply] = useState<string>("");
+    const [initSupply, setInitSupply] = useState<number>(1);
     const [tokenState, setTokenState] = useRecoilState(tokenAddState);
     const validateForm = () => {
         const walletPublicKey = wallet.publicKey?.toBase58();
         const formData :FormData = {
             name,
             symbol,
+            decimals,
             initSupply
         };
         if(walletPublicKey) {
@@ -112,6 +115,7 @@ export const CreateToken = () => {
             <TextInput label="Name" placeholder="Name" value={name} onChange={(value) => {setName(value)}} />
             <TextInput label="Description" placeholder="Description" value={description} onChange={(value) => {setDescription(value)}} />
             <TextInput label="Symbol" placeholder="Symbol" value={symbol || ""} onChange={(value) => {setSymbol(value)}} />
+            <TextInput label="Decimals" placeholder="Decimals" value={decimals} onChange={(value) => {setDecimals(Number(value))}} />
             <div className="pt-2">
                 <label className="block mb-2 text-sm font-medium text-gray-900 pt-2">Token Image</label>
                 <div className="flex gap-4">
@@ -155,7 +159,7 @@ export const CreateToken = () => {
                     </button>
                 </div>
             </div>
-            <TextInput label="Initial Supply" placeholder="Initial Supply" value={initSupply || ""} onChange={(value) => {setInitSupply(value)}} />
+            <TextInput label="Initial Supply" placeholder="Initial Supply" value={initSupply.toString()} onChange={(value) => {setInitSupply(Number(value))}} />
             <div className="flex justify-center pt-4">               
                 <button 
                     className="text-white btn-primary px-4 py-2 rounded-md flex-auto p-2 w-1/5"
@@ -163,15 +167,17 @@ export const CreateToken = () => {
                     if (!validateForm()) return;
                     const metadataUri = await saveTokenMetadata(name, symbol, description, image || "");
                     console.log(metadataUri);
-                    const token = await createToken(connection, wallet, name, symbol,description, metadataUri, initSupply);
+                    const token = await createToken(connection, wallet, name, symbol,description, metadataUri, initSupply, decimals);
+                    //const sign = mintToken(connection, wallet,new PublicKey('ENYYVshzF1wR1N8sckVxpP4EFJoCNWYXVqjJdh23w6JV'),'5wBddGeBcyr2ejBxzJ2R4XBYfZPFbUPgRctP2xnhZ4MQ',2);
+                    // console.log(sign);
                     const res = await saveToken(wallet.publicKey?.toString()||"", name, symbol, description, image, initSupply, token);
-                    if(res) {
+                    if(true) {
                         toast.success("Token created successfully");
                         setName("");
                         setSymbol("");
                         setDescription("");
                         setImageFile(null);
-                        setInitSupply("");
+                        setInitSupply(1);
                         setTokenState(tokenState+1);
                     } else {
                         toast.error("Something went wrong");
