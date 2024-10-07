@@ -64,7 +64,7 @@ export async function paySalary(clientId: number, connection: Connection,
                 SystemProgram.transfer({
                     fromPubkey: wallet.publicKey,
                     toPubkey: new PublicKey(salaryTransaction.employeeWallet),
-                    lamports: salaryTransaction.amount
+                    lamports: salaryTransaction.amount / LAMPORTS_PER_SOL
                 })
             );
         });

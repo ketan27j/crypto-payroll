@@ -35,7 +35,7 @@ const fundTransferSchema = z.object({
     currency: z.string().min(1, "Currency is required"),
   });
   
-export const FundTranser = () => {
+export const FundTransfer = () => {
     const { connection } = useConnection();
     const [senderWallet, setSenderWallet] = useState<string>("");
     const [senderBalance, setSenderBalance] = useState<number>(0);
@@ -73,7 +73,6 @@ export const FundTranser = () => {
         return true;
       };
 
-      const TransferForm = () => {
         
         return <Card title="Quick Send">
             <div>
@@ -176,13 +175,14 @@ export const FundTranser = () => {
                 </div> 
             </div>
         </Card>
-      }
+}
+export default function() {
 
       return (
       <ConnectionProvider endpoint={process.env.SOLANA_ENDPOINT || "https://api.devnet.solana.com"}>
                 <WalletProvider wallets={[]} autoConnect>
                     <WalletModalProvider>
-                    <TransferForm></TransferForm>                        
+                    <FundTransfer></FundTransfer>                        
                     </WalletModalProvider>
                 </WalletProvider>
             </ConnectionProvider>
