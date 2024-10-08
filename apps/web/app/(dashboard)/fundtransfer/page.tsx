@@ -1,5 +1,5 @@
 "use client"
-import { FundTranser } from "../../../components/FundTransfer";
+import { FundTransfer } from "../../../components/FundTransfer";
 import { ConnectionProvider, WalletProvider } from '@solana/wallet-adapter-react';
 import {
     WalletModalProvider,
@@ -16,7 +16,7 @@ export default function() {
                 <WalletProvider wallets={[]} autoConnect>
                     <WalletModalProvider>
                         
-                        <FundTranser></FundTranser>
+                        <FundTransfer></FundTransfer>
                     </WalletModalProvider>
                 </WalletProvider>
             </ConnectionProvider>
