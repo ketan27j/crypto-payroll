@@ -20,7 +20,7 @@ export default function Layout({
 
   const CanActivate = (roles: string[]) => {
     // return roles.includes(session?.user?.role);
-    return roles.includes("Admin");
+    return roles.includes(currentUserState?.role || '');
   };
 
   useEffect(() => {
