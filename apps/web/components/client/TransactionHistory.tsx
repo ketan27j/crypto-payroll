@@ -6,6 +6,7 @@ import { getTransactionsBySenderId } from '../../app/lib/actions/solana/salaryTr
 import { CurrentUserState } from "../../app/store/clientAddState";
 import { useRecoilState } from "recoil";
 import { Card } from '@repo/ui/card';
+import { date } from 'zod';
 
 interface Transaction {
   senderName: string;
@@ -15,6 +16,19 @@ interface Transaction {
   amount: number;
   date: string;
 }
+
+const FormatDateTime = (date: Date) => {
+  const options: Intl.DateTimeFormatOptions = {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+    hour: 'numeric',
+    minute: 'numeric',
+    second: 'numeric',
+    hour12: true,
+  };
+  return date.toLocaleString('en-US', options);
+};
 
 export const TransactionHistory = () => {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
@@ -27,13 +41,14 @@ export const TransactionHistory = () => {
         }
       let salaryDetails = await getTransactionsBySenderId(currentUserState?.id);
       console.log('salaryDetails-history', salaryDetails);
-      const formattedTransactions = salaryDetails.map(detail => ({
+      let formattedTransactions = salaryDetails.map(detail => ({
         senderName: detail.Sender.name, // You might want to fetch actual names
         receiverName: (detail.Sender.name == detail.Receiver.name) ? '' : '- '+detail.Receiver.name, // You might want to fetch actual names
         senderWallet: detail.SenderWallet,
         receiverWallet: detail.ReceiverWallet,
         amount: detail.Amount,
-        date: new Date(detail.Date).toLocaleDateString(),
+        // date: new Date(detail.Date).toString(),
+        date: FormatDateTime(detail.Date)
       }));
       setTransactions(formattedTransactions);
     };

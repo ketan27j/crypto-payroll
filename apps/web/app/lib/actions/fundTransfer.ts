@@ -4,7 +4,8 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "../auth";
 import { SaveTransactions } from "./solana/salaryTransaction";
 
-export async function transferFund(senderWallet: string,receiverWallet: string,currency: string,amount: number,signature: string) {
+export async function transferFund(senderWallet: string,receiverWallet: string,
+    currency: string,amount: number,signature: string): Promise<any> {
     try{
         const session = await getServerSession(authOptions);
         if (!session?.user) {
@@ -13,7 +14,7 @@ export async function transferFund(senderWallet: string,receiverWallet: string,c
         const userId = Number(session.user.id); 
         const user = await prisma.client.findUnique({
             where: {
-                id: userId,
+                userId: userId,
             },
         });
         if (!user) {
@@ -34,7 +35,6 @@ export async function transferFund(senderWallet: string,receiverWallet: string,c
         },
         });
         return transaction;
-        // SaveTransactions()
         } catch (error) {
             console.log(error);
             return null;
