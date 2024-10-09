@@ -4,7 +4,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "../auth";
 import { SaveTransactions } from "./solana/salaryTransaction";
 
-export async function transferFund(senderWallet: string,receiverWallet: string,currecy: string,amount: number,signature: string) {
+export async function transferFund(senderWallet: string,receiverWallet: string,currency: string,amount: number,signature: string) {
     try{
         const session = await getServerSession(authOptions);
         if (!session?.user) {
@@ -19,18 +19,21 @@ export async function transferFund(senderWallet: string,receiverWallet: string,c
         if (!user) {
             return null;
         }
-        //Transfer fund
-        // const transaction = await prisma.transaction.create({
-        // data: {
-        //     senderWallet: senderWallet,
-        //     receiverWallet: receiverWallet,
-        //     currency: currecy,
-        //     amount:amount,
-        //     signature: signature,
-        //     userId: userId
-        // },
-        // });
-        // return transaction;
+        // Transfer fund
+        const transaction = await prisma.transaction.create({
+        data: {
+            senderUserId: userId,
+            receiverUserId: userId, 
+            senderWallet: senderWallet,
+            receiverWallet: receiverWallet,
+            currency: currency,
+            amount:amount,
+            signature: signature,
+            createdBy: userId,
+            userId: userId
+        },
+        });
+        return transaction;
         // SaveTransactions()
         } catch (error) {
             console.log(error);

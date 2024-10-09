@@ -10,6 +10,8 @@ import { Card } from '@repo/ui/card';
 interface Transaction {
   senderName: string;
   receiverName: string;
+  senderWallet: string;
+  receiverWallet: string;
   amount: number;
   date: string;
 }
@@ -27,7 +29,9 @@ export const TransactionHistory = () => {
       console.log('salaryDetails-history', salaryDetails);
       const formattedTransactions = salaryDetails.map(detail => ({
         senderName: detail.Sender.name, // You might want to fetch actual names
-        receiverName: detail.Receiver.name, // You might want to fetch actual names
+        receiverName: (detail.Sender.name == detail.Receiver.name) ? '' : '- '+detail.Receiver.name, // You might want to fetch actual names
+        senderWallet: detail.SenderWallet,
+        receiverWallet: detail.ReceiverWallet,
         amount: detail.Amount,
         date: new Date(detail.Date).toLocaleDateString(),
       }));
@@ -40,11 +44,13 @@ export const TransactionHistory = () => {
   const columns: ColumnDef<Transaction>[] = [
     {
       accessorKey: 'senderName',
-      header: 'Sender Name',
+      header: 'Sender',
+      cell: ({ row }) => `${row.original.senderName} - ${row.original.senderWallet}`,
     },
     {
       accessorKey: 'receiverName',
-      header: 'Receiver Name',
+      header: 'Receiver',
+      cell: ({ row }) => `${row.original.receiverName}  ${row.original.receiverWallet}`,
     },
     {
       accessorKey: 'amount',

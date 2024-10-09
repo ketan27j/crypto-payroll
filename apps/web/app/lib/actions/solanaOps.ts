@@ -1,6 +1,6 @@
 "use client"
 import { WalletContextState } from "@solana/wallet-adapter-react";
-import { Connection, Keypair, LAMPORTS_PER_SOL, PublicKey, SystemProgram, Transaction } from "@solana/web3.js";
+import { Connection, Keypair, LAMPORTS_PER_SOL, PublicKey, SystemProgram, Transaction, TransactionConfirmationStrategy } from "@solana/web3.js";
 import bs58 from 'bs58';
 import { SalaryInfo, SaveSalaryTransaction } from "./solana/salaryTransaction";
 
@@ -14,29 +14,44 @@ export async function transferSol(connection: Connection, wallet: WalletContextS
     if (!wallet.publicKey) {
         throw new Error("Wallet not connected");
     }
+    console.log('wallet', wallet.publicKey.toString());
+    
+    try{
+        const receiverWalletAddress = new PublicKey(receiverWallet);
+        const transaction = new Transaction();
+        transaction.add(
+            SystemProgram.transfer({
+                fromPubkey: wallet.publicKey,
+                toPubkey: receiverWalletAddress,
+                lamports: amount * LAMPORTS_PER_SOL
+            })
+        );
+        //await connection.sendTransaction(transaction, [senderWallet]);
+        const { blockhash } = await connection.getLatestBlockhash();
+        transaction.recentBlockhash = blockhash;
+        transaction.feePayer = wallet.publicKey;
 
-    const receiverWalletAddress = new PublicKey(receiverWallet);
-    const transaction = new Transaction();
-    transaction.add(
-        SystemProgram.transfer({
-            fromPubkey: wallet.publicKey,
-            toPubkey: receiverWalletAddress,
-            lamports: amount * LAMPORTS_PER_SOL
-        })
-    );
-    //await connection.sendTransaction(transaction, [senderWallet]);
-    const { blockhash } = await connection.getLatestBlockhash();
-    transaction.recentBlockhash = blockhash;
-    transaction.feePayer = wallet.publicKey;
+        if (!wallet.signTransaction) {
+            throw new Error("Wallet does not support signing transactions");
+        }
 
-    if (!wallet.signTransaction) {
-        throw new Error("Wallet does not support signing transactions");
+        const signed = await wallet.signTransaction(transaction);
+        const signature = await connection.sendRawTransaction(signed.serialize());
+        const confirmationStrategy: TransactionConfirmationStrategy = {
+            signature: signature,
+            blockhash: blockhash,
+            lastValidBlockHeight: await connection.getLatestBlockhash().then(res => res.lastValidBlockHeight),
+          };
+          
+        await connection.confirmTransaction(confirmationStrategy);
+         
+        // await connection.confirmTransaction(signature);
+        return signature;
+    } catch (e) {
+        console.log('error', e);
+        throw e;
     }
-
-    const signed = await wallet.signTransaction(transaction);
-    const signature = await connection.sendRawTransaction(signed.serialize());
-    await connection.confirmTransaction(signature);
-    return signature;
+    
 }
 
 export async function paySalary(clientId: number, connection: Connection, 
@@ -127,7 +142,7 @@ export async function getFeePayerKeyPair() {
     try
     {
         let base58PrivateKey = process.env.WALLET_PRIVATE_KEY || '';
-        base58PrivateKey = "2iTouTNin3MtKQtQLkT7dPH2FdSjgwWJ3k3qjPftBtLp2fqddXnB6erqyt9kvMC7odjnE51QinJZ1Ji77hDKV8U2"
+        base58PrivateKey = "XXXXXXXxxx"
         console.log('base58PrivateKey', base58PrivateKey);
         const privateKeyBuffer = bs58.decode(base58PrivateKey);
         return Keypair.fromSecretKey(privateKeyBuffer);

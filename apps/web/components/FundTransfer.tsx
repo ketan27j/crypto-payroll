@@ -133,37 +133,36 @@ export const FundTransfer = () => {
                         if (!validateForm()) return;
                         setIsLoading(true);
                         try {
-                            //const signature = await transferSol(connection, wallet, receiverWallet, parseFloat(amount))
-                            const scheduledTime = new anchor.BN(Date.now() / 1000 + 60);
-                            const transAmount = new anchor.BN(1e8);
-                            const provider = new anchor
-                                                    .AnchorProvider(
-                                                        connection, 
-                                                        wallet as unknown as anchor.Wallet, 
-                                                        {}
-                                                    );
-                            const program = new Program(idl as Idl, provider) as unknown as Program<SolTransfer>;
+                            const signature = await transferSol(connection, wallet, receiverWallet, parseFloat(amount))
+                            // const scheduledTime = new anchor.BN(Date.now() / 1000 + 60);
+                            // const transAmount = new anchor.BN(1e8);
+                            // const provider = new anchor
+                            //                         .AnchorProvider(
+                            //                             connection, 
+                            //                             wallet as unknown as anchor.Wallet, 
+                            //                             {}
+                            //                         );
+                            // const program = new Program(idl as Idl, provider) as unknown as Program<SolTransfer>;
                             //const signerAccount = await getFeePayerKeyPair();
-                            const tx = await program.methods
-                                            .transferSol(transAmount, scheduledTime)
-                                            .accountsPartial({
-                                                sender: new PublicKey(senderWallet),
-                                                receiver: new PublicKey(receiverWallet),
-                                                systemProgram: web3.SystemProgram.programId,
-                                            })
-                                            //.signers([signerAccount])
-                                        .rpc();
+                            // const tx = await program.methods
+                            //                 .transferSol(transAmount, scheduledTime)
+                            //                 .accountsPartial({
+                            //                     sender: new PublicKey(senderWallet),
+                            //                     receiver: new PublicKey(receiverWallet),
+                            //                     systemProgram: web3.SystemProgram.programId,
+                            //                 })
+                            //                 //.signers([signerAccount])
+                            //             .rpc();
 
-                            
-                            // const res = await transferFund(senderWallet, receiverWallet, currencies.find(currencies => currencies.key === currency)?.value || 'SOL', Number(amount),signature)
-                            // if(res) {
-                            //     toast.success("Fund transfered successfully");
-                            //     setReceiverWallet("");
-                            //     setSenderBalance(0);
-                            //     setAmount("0");
-                            // } else {
-                            //     toast.error("An error occurred during transfer");
-                            // }
+                            const res = await transferFund(senderWallet, receiverWallet, currencies.find(currencies => currencies.key === currency)?.value || 'SOL', Number(amount),signature)
+                            if(res) {
+                                toast.success("Fund transfered successfully with signature: " + signature);
+                                setReceiverWallet("");
+                                setSenderBalance(0);
+                                setAmount("0");
+                            } else {
+                                toast.error("An error occurred during transfer");
+                            }
                         } catch (e) {
                             toast.error("An error occurred during transfer");
                             console.log('error', e);
