@@ -3,9 +3,11 @@ import prisma from "@repo/db";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../auth";
 import { sendNotification } from "./notification";
+import { UserInfo } from "../../store/clientAddState";
 
 export interface EmployeeInfo {
   id: number,
+  userId: number,
   email: string | null,
   name: string | null,
   designation: string | null,
@@ -154,6 +156,7 @@ export async function getAllEmployees(): Promise<EmployeeInfo[]> {
       state: '',
       country: '',
       taxJurisdiction: '',
+      userId: employee.userId
     }));
 
     return transformedEmployees;
@@ -203,6 +206,54 @@ export async function updateEmployeeWallet(wallet: string): Promise<boolean> {
   }
 }
 
+export async function getUserInfoByEmail(email: string): Promise<UserInfo | null> {
+  try {
+    const userFromDb = await prisma.user.findUnique({
+      where: {
+        email: email,
+      },
+    });
+    if (!userFromDb) {
+      return null;
+    }
+    const userInfo: UserInfo = {
+      id: userFromDb.id,
+      name: userFromDb.name || '',
+      email: userFromDb.email || '',
+      role: userFromDb.role || '',
+      clientInfo: null,
+      employeeInfo: null,
+    };
+    if(userFromDb.role === 'ClientAdmin') {
+      const client = await prisma.client.findUnique({
+        where: {
+          userId: userFromDb.id,
+        },
+      });
+      if (client) {
+        userInfo.clientInfo = {
+          id: client.id
+        };
+      }
+    } else if (userFromDb.role === 'Employee') {
+      const employees = await prisma.employee.findMany({
+        where: {
+          userId: userFromDb.id,
+        },
+      });
+      if (employees && employees.length > 0) {
+        userInfo.employeeInfo = {
+          id: employees[0]?.id || 0,
+        };
+      }
+    }
+    return userInfo;
+  } catch (error) {
+    console.error('Error fetching userInfo:', error);
+    return null;
+  }
+}
+
 export async function getEmployeeByUserId(email: string): Promise<EmployeeInfo | null> {
   try {
     const userInfo = await prisma.user.findUnique({
@@ -248,6 +299,7 @@ export async function getEmployeeByUserId(email: string): Promise<EmployeeInfo |
       state: null,
       country: null,
       taxJurisdiction: null,
+      userId: employee.userId
     };
 
     return employeeInfo;

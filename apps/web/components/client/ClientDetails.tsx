@@ -41,7 +41,8 @@ export const ClientDetails = () => {
       header: 'Actions',
       cell: ({ row }) => (
         <div className="flex space-x-2">
-          <button onClick={() => handleDelete(row.original.id)}>Delete</button>
+              <button onClick={() => handleEdit(row.original.id)}>Edit</button>
+              <button onClick={() => handleDelete(row.original.id)}>Delete</button>
         </div>
       ),
     },
@@ -55,6 +56,10 @@ export const ClientDetails = () => {
     });
   }, [clientState]);
 
+  const handleEdit = async (id: number) => {
+    
+  };
+  
   const handleDelete = async (id: number) => {
     const success = await deleteClient(id);
     if (success) {

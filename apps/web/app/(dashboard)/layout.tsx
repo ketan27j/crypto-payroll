@@ -1,61 +1,96 @@
+"use client";
 import { getServerSession } from "next-auth";
 import { SidebarItem } from "../../components/SidebarItem";
 import { authOptions } from "../lib/auth";
 import Link from "next/link";
+import { useRecoilState } from "recoil";
+import { CurrentUserState } from "../store/clientAddState";
 
-export default async function Layout({
+import { useState, useRef, useEffect } from 'react';
+
+export default function Layout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const session = await getServerSession(authOptions);
-  // console.log('my session', session.user);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [currentUserState, setCurrentUserState] = useRecoilState(CurrentUserState);
+  const sidebarRef = useRef<HTMLDivElement>(null);
+  // const session = await getServerSession(authOptions);
+
   const CanActivate = (roles: string[]) => {
-    return roles.includes(session?.user?.role);
+    // return roles.includes(session?.user?.role);
+    return roles.includes("Admin");
   };
-  if(session?.user){
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (sidebarRef.current && !sidebarRef.current.contains(event.target as Node)) {
+        setIsSidebarOpen(false);
+      }
+    }
+  
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+  
+  if(currentUserState?.id){
     return (
-      <div className="flex">
-          <div className="w-72 bg-[#300a24] min-h-screen mr-4 pt-8 shadow-lg">
-              <div className="px-4 space-y-3">
-                <div>
-                  <div className="px-4 space-y-3 mb-10">
-                    <div className="flex items-center space-x-3 mb-4">
-                      <div className="w-10 h-10 rounded-full bg-purple-500 flex items-center justify-center text-white text-xl font-bold">
-                        {session.user.name ? session.user.name[0].toUpperCase() : 'U'}
-                      </div>
-                      <span className="text-white font-bold">{session.user.name}</span>
+      <div className="flex relative min-h-screen">
+        <button 
+          className="fixed top-20 left-4 z-30 mb-15 md:hidden"
+          onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" className="w-6 h-6">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+        </button>
+
+        <div 
+            ref={sidebarRef}
+            className={`w-72 bg-[#300a24] min-h-screen mr-4 pt-8 shadow-lg fixed top-0 left-0 z-20 transition-transform duration-300 ease-in-out ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0 md:static`}>
+            <div className="px-4 space-y-3">
+              <div>
+                <div className="px-4 space-y-3">
+                  <div className="flex items-center space-x-3 mb-4">
+                    <div className="w-10 h-10 rounded-full bg-purple-500 flex items-center justify-center text-white text-xl font-bold">
+                      {currentUserState ? currentUserState.name.charAt(0).toUpperCase() : 'U'}
                     </div>
-                    {/* Rest of the sidebar items */}
+                    <span className="text-white font-bold">{currentUserState.name}</span>
                   </div>
-                  <hr className="border-gray-500 my-4" />
+                  {/* Rest of the sidebar items */}
                 </div>
-                  <SidebarItem href={"/dashboard"} icon={<HomeIcon />} title="Dashboard" className="text-white text-lg font-medium hover:bg-purple-700 hover:text-purple-100 rounded-lg transition-all duration-200" />
-                  <SidebarItem href={"/profile"} icon={<AccountIcon />} title="Profile" className="text-white text-lg font-medium hover:bg-purple-700 hover:text-purple-100 rounded-lg transition-all duration-200" />
-                  { CanActivate(['Admin','ClientAdmin']) &&
-                    <SidebarItem href={"/employee"} icon={<EmployeeIcon />} title="Employee Information" className="text-white text-lg font-medium hover:bg-purple-700 hover:text-purple-100 rounded-lg transition-all duration-200" />
-                  }
-                  { CanActivate(['Admin']) &&
-                    <SidebarItem href={"/client"} icon={<ClientIcon />} title="Client Information" className="text-white text-lg font-medium hover:bg-purple-700 hover:text-purple-100 rounded-lg transition-all duration-200" /> 
-                  }
-                  { CanActivate(['Admin','ClientAdmin']) &&
-                    <SidebarItem href={"/fundtransfer"} icon={<TransactionsIcon />} title="Fund Transfer" className="text-white text-lg font-medium hover:bg-purple-700 hover:text-purple-100 rounded-lg transition-all duration-200" />
-                  }
-                  { CanActivate(['Admin','ClientAdmin']) &&
-                    <SidebarItem href={"/scheduling"} icon={<SchedulingIcon />} title="Scheduling" className="text-white text-lg font-medium hover:bg-purple-700 hover:text-purple-100 rounded-lg transition-all duration-200" />
-                  }
-                  { CanActivate(['Admin','ClientAdmin']) &&
-                    <SidebarItem href={"/salaryPayment"} icon={<TransactionsIcon />} title="Salary Payment" className="text-white text-lg font-medium hover:bg-purple-700 hover:text-purple-100 rounded-lg transition-all duration-200" />
-                  }
-                  { CanActivate(['Admin','ClientAdmin']) &&
-                    <SidebarItem href={"/tokenlaunchpad"} icon={<TokenLaunchpadIcon />} title="Token Launchpad" className="text-white text-lg font-medium hover:bg-purple-700 hover:text-purple-100 rounded-lg transition-all duration-200" />
-                  }
+                <hr className="border-gray-500 my-4" />
               </div>
-          </div>
-              {children}
-      </div>    );
-  }else {
-    return (
+                <SidebarItem href={"/dashboard"} icon={<HomeIcon />} title="Dashboard" className="text-white text-lg font-medium hover:bg-purple-700 hover:text-purple-100 rounded-lg transition-all duration-200" />
+                <SidebarItem href={"/profile"} icon={<AccountIcon />} title="Profile" className="text-white text-lg font-medium hover:bg-purple-700 hover:text-purple-100 rounded-lg transition-all duration-200" />
+                { CanActivate(['Admin','ClientAdmin']) &&
+                  <SidebarItem href={"/employee"} icon={<EmployeeIcon />} title="Employee Information" className="text-white text-lg font-medium hover:bg-purple-700 hover:text-purple-100 rounded-lg transition-all duration-200" />
+                }
+                { CanActivate(['Admin']) &&
+                  <SidebarItem href={"/client"} icon={<ClientIcon />} title="Client Information" className="text-white text-lg font-medium hover:bg-purple-700 hover:text-purple-100 rounded-lg transition-all duration-200" /> 
+                }
+                { CanActivate(['Admin','ClientAdmin']) &&
+                  // <SidebarItem href={"/fundtransfer"} icon={<TransactionsIcon />} title="Fund Transfer" className="text-white text-lg font-medium hover:bg-purple-700 hover:text-purple-100 rounded-lg transition-all duration-200" />
+                  <SidebarItem href={"/payments"} icon={<TransactionsIcon />} title="Payments" className="text-white text-lg font-medium hover:bg-purple-700 hover:text-purple-100 rounded-lg transition-all duration-200" />
+                }
+                { CanActivate(['Admin','ClientAdmin']) &&
+                  <SidebarItem href={"/scheduling"} icon={<SchedulingIcon />} title="Scheduling" className="text-white text-lg font-medium hover:bg-purple-700 hover:text-purple-100 rounded-lg transition-all duration-200" />
+                }
+                {/* { CanActivate(['Admin','ClientAdmin']) &&
+                  <SidebarItem href={"/salaryPayment"} icon={<TransactionsIcon />} title="Salary Payment" className="text-white text-lg font-medium hover:bg-purple-700 hover:text-purple-100 rounded-lg transition-all duration-200" />
+                } */}
+                { CanActivate(['Admin','ClientAdmin']) &&
+                  <SidebarItem href={"/tokenlaunchpad"} icon={<TokenLaunchpadIcon />} title="Token Launchpad" className="text-white text-lg font-medium hover:bg-purple-700 hover:text-purple-100 rounded-lg transition-all duration-200" />
+                }
+            </div>
+        </div>
+          {children}
+      </div>
+    );
+  }else {    return (
       <div className="flex min-h-screen w-full items-center justify-center gap-4 p-4">
         <div className="flex flex-col items-center justify-center space-y-4 text-center">
           <div className="flex flex-col items-center space-y-2">
