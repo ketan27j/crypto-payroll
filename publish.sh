@@ -2,7 +2,7 @@ cd /projects/crypto-function
 
 git pull
 
-container_id='docker ps -a --filter "name=crypto-function" --format "{{.ID}}"
+container_id='docker ps -a --filter "name=crypto-function" --format "{{.ID}}"'
 
 docker stop container_id
 
