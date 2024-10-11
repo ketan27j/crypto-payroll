@@ -2,6 +2,7 @@ import db from "@repo/db";
 import CredentialsProvider from "next-auth/providers/credentials"
 import bcrypt from "bcryptjs";
 import GoogleProvider from "next-auth/providers/google";
+import { signIn } from "next-auth/react";
 
 export const authOptions = {
     providers: [
@@ -9,8 +10,8 @@ export const authOptions = {
           name: 'Credentials',
           credentials: {
             // phone: { label: "Phone number", type: "text", placeholder: "1234567890", required: true },
-            email: { label: "Email Id", type: "email", placeholder: "user@email.com", required: true },
-            password: { label: "Password", type: "password", required: true }
+            email: { value: "cryptostartup@gmail.com", label: "Email Id", type: "email", placeholder: "user@email.com", required: true },
+            password: { value: "test", label: "Password", type: "password", required: true }
           },
           async authorize(credentials: any) {
             const hashedPassword = await bcrypt.hash(credentials.password, 10);
@@ -53,11 +54,11 @@ export const authOptions = {
             return null
           },
         }),
-        GoogleProvider({
-            clientId: process.env.GOOGLE_CLIENT_ID || "",
-            clientSecret: process.env.GOOGLE_CLIENT_SECRET || "",
-            allowDangerousEmailAccountLinking: true,
-          }),
+        // GoogleProvider({
+        //     clientId: process.env.GOOGLE_CLIENT_ID || "",
+        //     clientSecret: process.env.GOOGLE_CLIENT_SECRET || "",
+        //     allowDangerousEmailAccountLinking: true,
+        //   }),
     ],
     secret: process.env.JWT_SECRET || "secret",
     callbacks: {
@@ -73,6 +74,9 @@ export const authOptions = {
             session.user.id = token.sub
             session.user.role = token.role
             return session
+        },
+        redirect() {
+            return "/dashboard"
         }
     }
   }

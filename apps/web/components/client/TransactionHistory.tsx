@@ -30,7 +30,11 @@ const FormatDateTime = (date: Date) => {
   return date.toLocaleString('en-US', options);
 };
 
-export const TransactionHistory = () => {
+export const TransactionHistory = (
+  {
+    cardTitle
+  }: any
+) => {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [currentUserState, setCurrentUserState] = useRecoilState(CurrentUserState);
 
@@ -79,7 +83,7 @@ export const TransactionHistory = () => {
   ];
 
   return (
-      <Card title='Transaction History'>
+      <Card title={cardTitle}>
         <Table data={transactions} columns={columns} />
       </Card>
   );

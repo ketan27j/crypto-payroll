@@ -29,9 +29,8 @@ export function AppbarClient() {
    <div>
       <Appbar onSignin={async () => { 
         try{
-          await signIn()
+          await signIn();
           toast.success("Login successful")
-          router.push("/dashboard") 
         } catch (error) {
           toast.error('Username or password is incorrect');
         }
