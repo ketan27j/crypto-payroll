@@ -64,11 +64,12 @@ export async function paySalary(clientId: number, connection: Connection,
     console.log('salaryDetails', salaryDetails);
     try {
         // const salaryTransactions = await getEmployeesForClient(1);
-        const { blockhash } = await connection.getLatestBlockhash();
-        const transaction = new Transaction({
-            recentBlockhash: blockhash,
-            feePayer: wallet.publicKey,
-        });
+        // const { blockhash } = await connection.getLatestBlockhash();
+        // {
+        //     recentBlockhash: blockhash,
+        //     feePayer: wallet.publicKey,
+        // }
+        const transaction = new Transaction();
         
         salaryDetails?.forEach(async (salaryTransaction) => {
             if (!wallet.publicKey) {
@@ -79,10 +80,13 @@ export async function paySalary(clientId: number, connection: Connection,
                 SystemProgram.transfer({
                     fromPubkey: wallet.publicKey,
                     toPubkey: new PublicKey(salaryTransaction.employeeWallet),
-                    lamports: salaryTransaction.amount / LAMPORTS_PER_SOL
+                    lamports: salaryTransaction.amount * LAMPORTS_PER_SOL
                 })
             );
         });
+        const { blockhash } = await connection.getLatestBlockhash();
+        transaction.recentBlockhash = blockhash;
+        transaction.feePayer = wallet.publicKey;
 
         if (!wallet.signTransaction) {
             throw new Error("Wallet does not support signing transactions");
@@ -91,8 +95,15 @@ export async function paySalary(clientId: number, connection: Connection,
 
         const signed = await wallet.signTransaction(transaction);
         const signature = await connection.sendRawTransaction(signed.serialize());
-        await connection.confirmTransaction(signature);
-
+        // await connection.confirmTransaction(signature);
+        const confirmationStrategy: TransactionConfirmationStrategy = {
+            signature: signature,
+            blockhash: blockhash,
+            lastValidBlockHeight: await connection.getLatestBlockhash().then(res => res.lastValidBlockHeight),
+          };
+          
+        await connection.confirmTransaction(confirmationStrategy);
+        
         let clientInfo = {
             id: clientId,
             wallet: wallet.publicKey?.toString() || ''

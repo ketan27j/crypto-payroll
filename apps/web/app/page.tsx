@@ -24,7 +24,7 @@ export default function Home() {
         <div className="container mx-auto text-center">
           <h2 className="text-6xl font-bold mb-6">Revolutionary Crypto Finance Solutions</h2>
           <p className="text-2xl mb-20">Empower your business with our cutting-edge crypto payroll and token management platform</p>
-          <a href="#" className="mt-10 bg-white text-blue-600 px-8 py-4 rounded-full font-bold text-2xl hover:bg-blue-100 transition duration-300">Get Started</a>
+          <a href="/api/auth/signin" className="mt-10 bg-white text-blue-600 px-8 py-4 rounded-full font-bold text-2xl hover:bg-blue-100 transition duration-300">Get Started</a>
         </div>
       </section>
 

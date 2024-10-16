@@ -52,7 +52,7 @@ export default function PaymentsTab() {
             <SalaryPayment></SalaryPayment>
           </TabPanel>
           <TabPanel className="rounded-xl bg-white p-3 ring-white ring-opacity-60 ring-offset-2 ring-offset-purple-400 focus:outline-none focus:ring-2">
-            <TransactionHistory></TransactionHistory>
+            <TransactionHistory cardTitle="Transaction History"></TransactionHistory>
           </TabPanel>
         </TabPanels>
       </TabGroup>

@@ -154,9 +154,16 @@ export const FundTransfer = () => {
                             //                 //.signers([signerAccount])
                             //             .rpc();
 
-                            const res = await transferFund(senderWallet, receiverWallet, currencies.find(currencies => currencies.key === currency)?.value || 'SOL', Number(amount),signature)
+                            const res = await transferFund(senderWallet, 
+                                        receiverWallet, 
+                                        currencies.find(currencies => 
+                                            currencies.key === currency)?.value || 'SOL', 
+                                            Number(amount),
+                                            signature
+                                        )
+                            console.log('res', res);
                             if(res) {
-                                toast.success("Fund transfered successfully with signature: " + signature);
+                                toast.success("Fund transfered successfully");
                                 setReceiverWallet("");
                                 setSenderBalance(0);
                                 setAmount("0");
