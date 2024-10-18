@@ -54,7 +54,7 @@ export async function createToken(connection: Connection, wallet: WalletContextS
         console.error("Error sending transaction:", error);
         throw error;
     }
-    return transaction.signature?.toString() || ''
+    return mintKeypair.publicKey.toBase58() || ''
 }
 
 export async function mintToken(connection: Connection, wallet: WalletContextState, mintPublicKey: PublicKey, receiverWallet:string, amount: number): Promise<string> {
