@@ -41,3 +41,4 @@ jobs:
           git add staging/cms/deployment.yml
           git commit -m "Update cms image to ${{ github.sha }}"
           git push https://${PAT}@github.com/code100x/staging-ops.git main
+          
