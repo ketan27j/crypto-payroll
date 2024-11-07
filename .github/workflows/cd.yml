@@ -36,11 +36,9 @@ jobs:
         username: ${{ secrets.SSH_USERNAME }}
         key: ${{ secrets.SSH_KEY }}
         script: |
-          sudo cd /projects/crypto-payroll
-          sudo git pull
-          sudo docker stop crypto-function
+          sudo docker pull ketan27j/crypto-function:latest
+          sudo docker stop crypto-function || true
           sudo docker container prune -f
           sudo docker rmi crypto-function
           sudo docker image prune -f
-          sudo docker build -t crypto-function .
-          sudo docker run -d --name crypto-function crypto-function
+          sudo docker run -d --name crypto-function ketan27j/crypto-function:latest
