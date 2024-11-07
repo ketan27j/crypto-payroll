@@ -36,9 +36,9 @@ jobs:
         username: ${{ secrets.SSH_USERNAME }}
         key: ${{ secrets.SSH_KEY }}
         script: |
-          sudo docker pull ketan27j/crypto-function:latest
           sudo docker stop crypto-function || true
           sudo docker container prune -f
           sudo docker rmi crypto-function
           sudo docker image prune -f
+          sudo docker pull ketan27j/crypto-function:latest
           sudo docker run -d --name crypto-function ketan27j/crypto-function:latest
