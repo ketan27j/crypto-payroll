@@ -24,10 +24,10 @@ jobs:
         context: .
         file: ./Dockerfile
         push: true
-        tags: crypto-function:latest
+        tags: ketan27j/crypto-function:latest
 
     - name: Verify Pushed Image
-      run: docker pull crypto-function:latest  # Replace with your Docker Hub username and repository
+      run: docker pull ketan27j/crypto-function:latest  # Replace with your Docker Hub username and repository
 
     - name: Deploy to EC2
       uses: appleboy/ssh-action@master
