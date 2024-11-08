@@ -1,4 +1,4 @@
-name: Build and Deploy to Docker Hub
+name: Build and Deploy to VM via Docker Hub
 
 on:
   push:
@@ -53,4 +53,4 @@ jobs:
           docker rmi crypto-function
           docker image prune -f
           docker pull ketan27j/crypto-function:latest
-          docker run -d --name crypto-function -e NEXTAUTH_URL=${{ secrets.NEXTAUTH_URL }} ketan27j/crypto-function:latest
+          docker run -d --name crypto-function -e NEXTAUTH_URL=${{ secrets.NEXTAUTH_URL }} DATABASE_URL=${{ secrets.DATABASE_URL }} JWT_SECRET=${{ secrets.JWT_SECRET }} AUTH_SECRET=${{ secrets.AUTH_SECRET }} SOLANA_ENDPOINT=${{ secrets.SOLANA_ENDPOINT }} ketan27j/crypto-function:latest
