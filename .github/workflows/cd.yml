@@ -53,4 +53,4 @@ jobs:
           docker rmi crypto-function
           docker image prune -f
           docker pull ketan27j/crypto-function:latest
-          docker run -d --name crypto-function ketan27j/crypto-function:latest
+          docker run -d --name crypto-function -e NEXTAUTH_URL=${{ secrets.NEXTAUTH_URL }} ketan27j/crypto-function:latest
