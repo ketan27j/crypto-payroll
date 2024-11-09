@@ -41,4 +41,4 @@ jobs:
           docker rmi crypto-function
           docker image prune -f
           docker pull ketan27j/crypto-function:latest
-          docker run -d --name crypto-function -e NEXTAUTH_URL=${{ secrets.NEXTAUTH_URL }} -e DATABASE_URL=${{ secrets.DATABASE_URL }} -e JWT_SECRET=${{ secrets.JWT_SECRET }} -e AUTH_SECRET=${{ secrets.AUTH_SECRET }} -e SOLANA_ENDPOINT=${{ secrets.SOLANA_ENDPOINT }} ketan27j/crypto-function:latest
+          docker run -d --name crypto-function --env NEXTAUTH_URL=${{ secrets.NEXTAUTH_URL }} --env DATABASE_URL=${{ secrets.DATABASE_URL }} --env JWT_SECRET=${{ secrets.JWT_SECRET }} --env AUTH_SECRET=${{ secrets.AUTH_SECRET }} --env SOLANA_ENDPOINT=${{ secrets.SOLANA_ENDPOINT }} ketan27j/crypto-function:latest
