@@ -35,7 +35,7 @@ RUN echo NEXTAUTH_URL=$NEXTAUTH_URL >> apps/web/.env
 RUN cat apps/web/.env
 RUN npm run build --force
 ## Remove .env file
-RUN rm apps/web/.env
+# RUN rm apps/web/.env
 
 # Build the Next.js application
 # RUN npm run build --force
