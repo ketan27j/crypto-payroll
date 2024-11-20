@@ -26,11 +26,11 @@ RUN npm install
 # ENV NEXT_PUBLIC_RECLAIM_CALLBACK_URL=NEXT_PUBLIC_RECLAIM_CALLBACK_URL
 
 ## put DATABASE_URL in apps/web/.env
-RUN echo DATABASE_URL=$DATABASE_URL >> apps/web/.env
-RUN echo NEXTAUTH_URL=$NEXTAUTH_URL >> apps/web/.env
+# RUN echo DATABASE_URL=$DATABASE_URL >> apps/web/.env
+# RUN echo NEXTAUTH_URL=$NEXTAUTH_URL >> apps/web/.env
 RUN npm run build --force
 ## Remove .env file
-RUN rm apps/web/.env
+# RUN rm apps/web/.env
 
 # Build the Next.js application
 # RUN npm run build --force
