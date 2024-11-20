@@ -25,6 +25,9 @@ jobs:
         file: ./Dockerfile
         push: true
         tags: ketan27j/crypto-function:latest
+        build-args: |
+          NEXTAUTH_URL=${{ secrets.NEXTAUTH_URL }}
+          DATABASE_URL=${{ secrets.DATABASE_URL }}
 
     - name: Verify Pushed Image
       run: docker pull ketan27j/crypto-function:latest  # Replace with your Docker Hub username and repository
@@ -41,4 +44,4 @@ jobs:
           docker rmi crypto-function
           docker image prune -f
           docker pull ketan27j/crypto-function:latest
-          docker run -d --name crypto-function --env NEXTAUTH_URL=${{ secrets.NEXTAUTH_URL }} --env DATABASE_URL=${{ secrets.DATABASE_URL }} --env JWT_SECRET=${{ secrets.JWT_SECRET }} --env AUTH_SECRET=${{ secrets.AUTH_SECRET }} --env SOLANA_ENDPOINT=${{ secrets.SOLANA_ENDPOINT }} --env GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }} --env GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }} --env GMAIL_USER=${{ secrets.GMAIL_USER }} --env GMAIL_PASSWORD=${{ secrets.GMAIL_PASSWORD }} --env RECLAIM_CALLBACK_URL=${{ secrets.RECLAIM_CALLBACK_URL }} --env RECLAIM_APP_SECRET=${{ secrets.RECLAIM_APP_SECRET }} ketan27j/crypto-function:latest
+          docker run -d --name crypto-function ketan27j/crypto-function:latest

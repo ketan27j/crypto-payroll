@@ -25,8 +25,15 @@ RUN npm install
 # ENV NEXT_PUBLIC_RECLAIM_APP_SECRET=NEXT_PUBLIC_RECLAIM_APP_SECRET
 # ENV NEXT_PUBLIC_RECLAIM_CALLBACK_URL=NEXT_PUBLIC_RECLAIM_CALLBACK_URL
 
+## put DATABASE_URL in apps/web/.env
+RUN echo DATABASE_URL=$DATABASE_URL >> apps/web/.env
+RUN echo NEXTAUTH_URL=$NEXTAUTH_URL >> apps/web/.env
+RUN DATABASE_URL=$DATABASE_URL NEXTAUTH_URL=$NEXTAUTH_URL npm run build --force
+## Remove .env file
+RUN rm apps/web/.env
+
 # Build the Next.js application
-RUN npm run build --force
+# RUN npm run build --force
 
 # Expose the port the app runs on
 EXPOSE 3000
