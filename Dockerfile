@@ -28,7 +28,7 @@ RUN npm install
 ## put DATABASE_URL in apps/web/.env
 RUN echo DATABASE_URL=$DATABASE_URL >> apps/web/.env
 RUN echo NEXTAUTH_URL=$NEXTAUTH_URL >> apps/web/.env
-RUN DATABASE_URL=$DATABASE_URL NEXTAUTH_URL=$NEXTAUTH_URL npm run build --force
+RUN npm run build --force
 ## Remove .env file
 RUN rm apps/web/.env
 
