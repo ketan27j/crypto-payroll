@@ -3,6 +3,7 @@ FROM node:20
 
 ARG DATABASE_URL
 ARG NEXTAUTH_URL
+ARG SOLANA_ENDPOINT
 # Set the working directory
 WORKDIR /app
 
@@ -32,7 +33,7 @@ RUN ls
 RUN touch apps/web/.env && echo DATABASE_URL=$DATABASE_URL >> apps/web/.env
 RUN ls apps/web/ -a
 RUN echo NEXTAUTH_URL=$NEXTAUTH_URL >> apps/web/.env
-RUN cat apps/web/.env
+RUN echo SOLANA_ENDPOINT=$SOLANA_ENDPOINT >> apps/web/.env
 RUN npm run build --force
 ## Remove .env file
 # RUN rm apps/web/.env
